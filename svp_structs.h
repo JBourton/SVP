@@ -7,12 +7,17 @@
 
 // Define structure to represent vectors
 typedef struct {
+    // Could just ask the user to input the dimension and git rid of this
     int dimension;
-    int vectorRows;
+    // A dynamic double array of vectors that span the vector space
+    // Note: These should be linearly independent, so validation should be performed
+    // These vectors should also have the same dimension
+    double basis;
 } Vector;
 
 // Funciton prototypes for operations with vectors
-// double euclideanDist()//basis vectors);
+// Perform Gram-Schmidt orthogonalisation
+// double gsOrthog()
 
 // Define lattice structures where SVP will be undertaken
 typedef struct {
