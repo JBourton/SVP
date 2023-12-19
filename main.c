@@ -4,40 +4,43 @@
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
-    // Validate that at least 1 vector is input
-    if (argc < 2) {
-        printf("Empty input. Please input vectors in form: %s [vector1]...[vectorN]\n", argv[0]);
-        return 1;
+    int numVectors;
+    int dimension;
+    printf("Enter the number of vectors: ");
+    scanf("%d", &numVectors);
+    printf("Enter the dimension: ");
+    scanf("%d", &dimension);
+    printf("Number of vectors: %d, Dimension: %d\n", numVectors, dimension);
+
+    // Declare an array to hold the vectors + dyanmically allocate memory
+    Vector* vectors;
+    vectors = malloc(sizeof(Vector) * numVectors);
+
+    // Create specified number of vectors
+    for (int i = 0; i < numVectors; ++i) {
+        float vectorInputs[dimension];
+        printf("Input vector number %d\n", i+1);
+        for (int j = 0; j < dimension; ++j) {
+            printf("Input element %d\n", j+1);
+            scanf("%f", &vectorInputs[j]);
+        }
+        // Create vectors using the declareVector function by passing in user inputs for each vector
+        vectors[i] = *declareVector(dimension, vectorInputs);
     }
 
-     // Iterate over user inputs
-    for (int i = 1; i < argc; ++i) {
-        // NOTE: Each command line argument is recognised as when a space occurs
-        printf(argv[i]);
+    // Test access
+    printf("Elements of the first vector:\n");
+    Vector* chosenVector = &vectors[0];
+    for (int i = 0; i < chosenVector->dimension; ++i) {
+        printf("Element %d: %f\n", i + 1, chosenVector->vectorData[i]);
     }
 
-    // Here add command line arguments
 
-
-    // Dynamically allocate memory to input vectors
-    int totalVectors = argc - 1;
-    Vector* vectors = (Vector*)malloc(totalVectors * sizeof(Vector));
-    
-    // Validate successful memory allocation
-    if (vectors == NULL) {
-        printf("Unsucsessful memory allocation. Closing program...\n");
-        return EXIT_FAILURE;
-    }
-
-    // As all vectors must be the same dimension, calculate dim of first vector and determine if the rest match up
-    printf("First input vector: %s\n", argv[1]);
-    declareVector(argv[1]);
-    // NOTE: NOW DECLARE THE VECTOR AND CALCULATE ITS DIMENSION
 
     // Free memory used up by vectors and the array they're stored in
-     for (int i = 0; i < totalVectors; ++i) {
-        cleanupVector(&vectors[i]);
-    }
-    free(vectors);
+    // for (int i = 0; i < totalVectors; ++i) {
+    //    cleanupVector(&vectors[i]);
+    //}
+    //free(vectors);
     return 0;
 }

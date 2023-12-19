@@ -17,8 +17,7 @@ typedef struct {
 // Funciton prototypes for operations with vectors
 // Perform Gram-Schmidt orthogonalisation
 // double gsOrthog();
-void declareVector(char* userVector);
-double euclideanNorm(Vector shortestVector);
+Vector* declareVector(int dimension, float* vectorInputs);
 void cleanupVector(Vector* vector);
 
 // Define lattice structures where SVP will be undertaken

@@ -6,9 +6,30 @@
 // Function to find the euclidean norm of the shortest vector
 // double euclideanNorm(Vector shortestVector) {}
 
-void declareVector(char* userVector) {
-    printf("User vector is: ");
-    printf(userVector);
+Vector* declareVector(int dimension, float* vectorInputs) {
+    // Attempt to dynamically assign memory to vectors
+    Vector* vector = malloc(sizeof(Vector));
+    if (vector == NULL) {
+        printf("Error, failed vector structure memory allocaiton\n");
+        return NULL;
+    }
+
+    vector->dimension = dimension;
+
+    // Allocate memory for the vector data
+    vector->vectorData = malloc(sizeof(float) * dimension);
+    if (vector->vectorData == NULL) {
+        printf("Error, failed vector values memory allocation\n");
+        free(vector); // Free allocated memory for Vector structure
+        return NULL;
+    }
+
+    // Transfer user inputs into vector data
+    for (int i = 0; i < dimension; ++i) {
+        vector->vectorData[i] = vectorInputs[i];
+    }
+
+    return vector;
 }
 
 // Function to cleanup the memory of a vector
