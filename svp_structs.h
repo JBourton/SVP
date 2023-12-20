@@ -14,22 +14,11 @@ typedef struct {
     float* vectorData;
 } Vector;
 
-// Funciton prototypes for operations with vectors
-// Perform Gram-Schmidt orthogonalisation
-// double gsOrthog();
+
 Vector* declareVector(int dimension, float* vectorInputs);
 void cleanupVector(Vector* vector);
 
-// Define lattice structures where SVP will be undertaken
-typedef struct {
-    int dimension;
-    int vectorCount;
-
-    // Point to the array containing vectors in the lattice
-    Vector* vectorArray;
-} Lattice;
-
-// Function prototypes for lattice-based operations
-Lattice* declareLattice(int dimension, int numVectors, vectors);
+// Basis matrix functions
+void display_basis_matrix(double** basis_matrix, int numVectors, int dimension);
 
 #endif

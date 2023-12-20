@@ -28,20 +28,32 @@ int main(int argc, char *argv[]) {
         vectors[i] = *declareVector(dimension, vectorInputs);
     }
 
-    // Now declare the latice here
 
-    // Test access
-    printf("Elements of the first vector:\n");
-    Vector* chosenVector = &vectors[0];
-    for (int i = 0; i < chosenVector->dimension; ++i) {
-        printf("Element %d: %f\n", i + 1, chosenVector->vectorData[i]);
+    // Allocate memory for basis matrix
+    // double basis_matrix[numVectors][dimension];
+    double** basis_matrix = (double**)malloc(numVectors * sizeof(double*));
+    for (int i = 0; i < numVectors; i++) {
+        basis_matrix[i] = (double*)malloc(dimension * sizeof(double));
     }
 
+    // Populate basis matrix
+    for (int i = 0; i < numVectors; i++) {
+        for (int j = 0; j < dimension; j++) {
+        basis_matrix[i][j] = vectors[i].vectorData[j];
+        }
+    }
 
-    // Free memory used up by vectors and the array they're stored in
+    // Print out the basis matrix populating with user-input values
+    display_basis_matrix(basis_matrix, numVectors, dimension);
+
+    // Free memory used up by basis matrix and vectors
     for (int i = 0; i < numVectors; ++i) {
         cleanupVector(&vectors[i]);
     }
     free(vectors);
+    for (int i = 0; i < numVectors; i++) {
+        free(basis_matrix[i]);
+    }
+    free(basis_matrix);
     return 0;
 }
