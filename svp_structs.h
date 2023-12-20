@@ -30,5 +30,6 @@ typedef struct {
 } Lattice;
 
 // Function prototypes for lattice-based operations
+Lattice* declareLattice(int dimension, int numVectors, vectors);
 
 #endif

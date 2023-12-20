@@ -32,6 +32,33 @@ Vector* declareVector(int dimension, float* vectorInputs) {
     return vector;
 }
 
+Lattice* declareLattice(int dimension, int numVectors, Vector vectors) {
+    // Attempt to dynamically assign memory to lattice structure
+    Lattice* lattice = malloc(sizeof(Lattice));
+    if (lattice == NULL) {
+        printf("Error, failed lattice structure memory allocaiton\n");
+        return NULL;
+    }
+
+    // Set fixed values
+    lattice->dimensions = dimension;
+    lattice->numBasisVectors = numVectors;
+
+    // Assign memory too, and set, basis vectors in the lattice
+    lattice->basisVectors = malloc(dimensions * numVectors * sizeof(double));
+    if (lattice->basisVectors == NULL) {
+        free(lattice);
+        return NULL;
+   }
+   for (int i = 0; i < numVectors; ++i) {
+     for (int j = 0; j < dimensions; ++j) {
+       lattice->basisVectors[i * dimension + j] = vectors[i].vectorData[j];
+     }
+   }
+
+    return lattice;
+}
+
 // Function to cleanup the memory of a vector
 void cleanupVector(Vector* vector) {
     free(vector->vectorData);

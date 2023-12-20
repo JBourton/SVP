@@ -28,6 +28,8 @@ int main(int argc, char *argv[]) {
         vectors[i] = *declareVector(dimension, vectorInputs);
     }
 
+    // Now declare the latice here
+
     // Test access
     printf("Elements of the first vector:\n");
     Vector* chosenVector = &vectors[0];
@@ -36,11 +38,10 @@ int main(int argc, char *argv[]) {
     }
 
 
-
     // Free memory used up by vectors and the array they're stored in
-    // for (int i = 0; i < totalVectors; ++i) {
-    //    cleanupVector(&vectors[i]);
-    //}
-    //free(vectors);
+    for (int i = 0; i < numVectors; ++i) {
+        cleanupVector(&vectors[i]);
+    }
+    free(vectors);
     return 0;
 }
