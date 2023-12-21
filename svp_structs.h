@@ -11,11 +11,11 @@ typedef struct {
     // The actual vector
     // Note: These should be linearly independent, so validation should be performed
     // These vectors should also have the same dimension
-    float* vectorData;
+    double* vectorData;
 } Vector;
 
 
-Vector* declareVector(int dimension, float* vectorInputs);
+Vector* declareVector(int dimension, double* vectorInputs);
 void cleanupVector(Vector* vector);
 
 // Basis matrix functions
