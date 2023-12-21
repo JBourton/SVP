@@ -53,11 +53,12 @@ int main(int argc, char *argv[]) {
     normalise(basis_matrix[0], dimension);
     printf("\nFirst vector, normalised: ");
     for (int i = 0; i < dimension; ++i) {
-        printf("%f ", basis_matrix[0][i]);
+        printf("%f", basis_matrix[0][i]);
     }
+    printf("\n");
 
     // Test project function
-    project(basis_matrix[0], basis_matrix[1], dimension);
+    minus_project(basis_matrix[0], basis_matrix[1], dimension);
     printf("Projected v1 onto v2\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
 
