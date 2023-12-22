@@ -2,16 +2,12 @@
 #include <stdio.h>
 #include "svp_structs.h"
 // Implmentations for the functions described in svp_structs.h will be written here
-
-// Function to find the euclidean norm of the shortest vector
-// double euclideanNorm(Vector shortestVector) {}
-
-void declareVector(char* userVector) {
-    printf("User vector is: ");
-    printf(userVector);
-}
-
-// Function to cleanup the memory of a vector
-void cleanupVector(Vector* vector) {
-    free(vector->vectorData);
+void display_basis_matrix(double** basis_matrix, int numVectors, int dimension) {
+    printf("Basis Matrix:\n");
+    for (int i = 0; i < numVectors; i++) {
+        for (int j = 0; j < dimension; j++) {
+            printf("%.2f ", basis_matrix[i][j]);
+        }
+        printf("\n");
+    }
 }

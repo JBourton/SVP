@@ -7,9 +7,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 
 # State source files
-SOURCES = main.c svp_structs.c
+SOURCES = main.c svp_structs.c lll.c
 
-HEADERS = svp_structs.h
+HEADERS = svp_structs.h lll.h
 
 # Set executable name
 EXECUTABLE = runme
@@ -19,7 +19,7 @@ all: $(EXECUTABLE)
 
 # Link executable with sources
 $(EXECUTABLE): $(SOURCES) $(HEADERS)
-	$(CC) $(CFLAGS) -o $(EXECUTABLE) $(SOURCES)
+	$(CC) $(CFLAGS) -o $(EXECUTABLE) $(SOURCES) -lm
 
 # Remove runme file
 clean:
