@@ -45,21 +45,10 @@ int main(int argc, char *argv[]) {
 
     // Print out the basis matrix populating with user-input values
     display_basis_matrix(basis_matrix, numVectors, dimension);
-
-    // Test the dot product of 2 values
-    double result = dot_product(basis_matrix[0], basis_matrix[1], dimension);
-    printf("Dot product of the first 2 values are: %f\n", result);
-
-    normalise(basis_matrix[0], dimension);
-    printf("\nFirst vector, normalised: ");
-    for (int i = 0; i < dimension; ++i) {
-        printf("%f", basis_matrix[0][i]);
-    }
-    printf("\n");
-
-    // Test project function
-    minus_project(basis_matrix[0], basis_matrix[1], dimension);
-    printf("Projected v1 onto v2\n");
+    
+    // Test the GS function
+    gram_schdmit(vectors, numVectors, dimension);
+    printf("Basis matrix after Gram-Schmidt:\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
 
     // Free memory used up by basis matrix and vectors

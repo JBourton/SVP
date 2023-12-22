@@ -75,3 +75,26 @@ void minus_project(double* v1, double* v2, int dimension) {
         printf("Error, v1 has magnitude 0");
     }  
 }
+
+// Note: Figure out the best way to pass in the basis matrix, because there seems to be issues with it
+// Perform Gram-Schmidt normalisation
+void gram_schdmit(double** vectors, int numVectors, int dimension) {
+    // Apply projection to every vector in the set
+    for (int i = 0; i < numVectors; ++i) {
+        // Apply the Gram-Schmidt process to the current vector
+        for (int j = 0; j < i; ++j) {
+            // Project the current vector onto the subspace spanned by previous vectors
+            minus_project(vectors[i], vectors[j], dimension);
+        }
+          // Optionally, normalize the vector after orthogonalization
+        double* norm_vector = normalise(vectors[i], dimension);
+
+        // Replace the original vector with the normalized one
+        if (norm_vector != NULL) {
+            for (int k = 0; k < dimension; ++k) {
+                vectors[i][k] = norm_vector[k];
+            }
+            free(norm_vector);
+        }
+    }
+}
