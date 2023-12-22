@@ -50,7 +50,8 @@ double* normalise(double* v, int dimension) {
 }
 
 // Calculate the projection of one vector onto another one
-void minus_project(double* v1, double* v2, int dimension) {
+double* minus_project(double* v1, double* v2, int dimension) {
+    double* project_v = malloc(dimension * sizeof(double));
     // projection of v1 onto v2 = ((v1 dot v2) / (v2 mangitude)^2) * v2, which is applied below
     
     // First, we find v1 dot v2
@@ -68,33 +69,18 @@ void minus_project(double* v1, double* v2, int dimension) {
         for (int i = 0; i < dimension; ++i) { 
             //printf("v2[i]: %f\n", v2[i]);
             //printf("projection factor * v2[i]: %f\n", proj_fac * v2[i]);
-            v1[i] -= (proj_fac * v2[i]);
+            project_v[i] -= (proj_fac * v2[i]);
         } 
     } else {
         // Prevent /0 error
         printf("Error, v1 has magnitude 0");
-    }  
+        return NULL;
+    }
+    return project_v; 
 }
 
 // Note: Figure out the best way to pass in the basis matrix, because there seems to be issues with it
 // Perform Gram-Schmidt normalisation
 void gram_schdmit(double** vectors, int numVectors, int dimension) {
-    // Apply projection to every vector in the set
-    for (int i = 0; i < numVectors; ++i) {
-        // Apply the Gram-Schmidt process to the current vector
-        for (int j = 0; j < i; ++j) {
-            // Project the current vector onto the subspace spanned by previous vectors
-            minus_project(vectors[i], vectors[j], dimension);
-        }
-          // Optionally, normalize the vector after orthogonalization
-        double* norm_vector = normalise(vectors[i], dimension);
-
-        // Replace the original vector with the normalized one
-        if (norm_vector != NULL) {
-            for (int k = 0; k < dimension; ++k) {
-                vectors[i][k] = norm_vector[k];
-            }
-            free(norm_vector);
-        }
-    }
+    
 }
