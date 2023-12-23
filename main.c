@@ -30,6 +30,11 @@ int main(int argc, char *argv[]) {
     printf("\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
 
+    double** GS_Matrix;
+    GS_Matrix = gram_schdmit(basis_matrix, numVectors, dimension);
+    printf("\n");
+    display_basis_matrix(GS_Matrix, numVectors, dimension);
+
     // Free memory used up by basis matrix and vectors
     for (int i = 0; i < numVectors; ++i) {
         free(basis_matrix[i]);
