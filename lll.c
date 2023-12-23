@@ -51,29 +51,39 @@ double* normalise(double* v, int dimension) {
 
 // Calculate the projection of one vector onto another one
 double* minus_project(double* v1, double* v2, int dimension) {
+    // debug Print v2
+    printf("V2 is: ");
+    for (int j = 0; j < dimension; ++j) {
+        printf("%f ", v2[j]);
+    }
+    printf("\n");
+    // Setup return vector
     double* project_v = malloc(dimension * sizeof(double));
+    for (int i = 0; i < dimension; ++i) {
+        project_v[i] = 0;
+    }
     // projection of v1 onto v2 = ((v1 dot v2) / (v2 mangitude)^2) * v2, which is applied below
     
     // First, we find v1 dot v2
     double dp_result = dot_product(v1, v2, dimension);
-    printf("Dot product result: %f\n", dp_result);
 
     // Then we find the square of the magnitude of v2
     double mag_sq = find_magnitude(v2, dimension);
     mag_sq *= mag_sq;
-    printf("mag_sq: %f\n", mag_sq);
     
     // Next, we divide those 2 values for each dimension
     if (mag_sq != 0) {
        double proj_fac = dp_result / mag_sq;
+       printf("projection factor: %f\n", proj_fac);
         for (int i = 0; i < dimension; ++i) {
+            // The projection factor is then multiplied by each component
             double projection = proj_fac * v2[i];
-            // Subtract projection
             project_v[i] += projection;
         } 
     } else {
         // Prevent /0 error
         printf("Error, v1 has magnitude 0");
+        free(project_v);
         return 0;
     }
     return project_v; 
