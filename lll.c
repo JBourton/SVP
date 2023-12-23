@@ -43,20 +43,14 @@ double* normalise(double* v, int dimension) {
             }
         }
     } else {
-        // Deal with inablity to allocate
-        printf("Error, memory not available to allocate");    
+        printf("Error, memory not available to allocate");
+        return NULL;  
     }  
     return norm_v;
 }
 
 // Calculate the projection of one vector onto another one
 double* minus_project(double* v1, double* v2, int dimension) {
-    // debug Print v2
-    printf("V2 is: ");
-    for (int j = 0; j < dimension; ++j) {
-        printf("%f ", v2[j]);
-    }
-    printf("\n");
     // Setup return vector
     double* project_v = malloc(dimension * sizeof(double));
     for (int i = 0; i < dimension; ++i) {
@@ -74,7 +68,6 @@ double* minus_project(double* v1, double* v2, int dimension) {
     // Next, we divide those 2 values for each dimension
     if (mag_sq != 0) {
        double proj_fac = dp_result / mag_sq;
-       printf("projection factor: %f\n", proj_fac);
         for (int i = 0; i < dimension; ++i) {
             // The projection factor is then multiplied by each component
             double projection = proj_fac * v2[i];
@@ -111,15 +104,12 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
         for (int i = 0; i < dimension; ++i) {
             total_projection[i] = 0;
         }
-        printf("\nIn the first part of the loop\n");
         // Note: v1 is vk and v2 is ui
         for (int i = 0; i < k; ++i) {  
             // Calculate one of the prjections
             double* row_projection = minus_project(vectors[k], U[i], dimension);
 
             // Print the contents of row_projection
-            printf("\nIn the second part of the loop\n");  
-            printf("row_projection: ");
             for (int j = 0; j < dimension; ++j) {
                 printf("%f ", row_projection[j]);
             }
@@ -137,6 +127,16 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
             U[k][i] -= total_projection[i];
         }
         free(total_projection);
+    }
+    // Finally, normalise the restulting U-matrix
+    for (int i = 0; i < numVectors; ++i) {
+        double* norm_u = normalise(U[i], dimension);
+        if (norm_u != NULL) {
+            for (int j = 0; j < dimension; ++j) {
+                U[i][j] = norm_u[j];
+            }
+            free(norm_u);
+        }
     }
     return U;
 }
