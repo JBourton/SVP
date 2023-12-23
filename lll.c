@@ -4,7 +4,13 @@
 #include "lll.h"
 #include "svp_structs.h"
 
-// Perform the dot product on 2 vectors
+/*
+Function purpose: Perform the dot product on 2 vectors
+Function inputs: 
+- 2 vectors to perform the dot product
+- dimension of those vectors
+Function output: An array representing the dot product of the 2 vectors
+*/ 
 double dot_product(double *v1, double *v2, int dimension) {
     double dp = 0;
     for (int i=0; i<dimension; ++i) {
@@ -14,7 +20,13 @@ double dot_product(double *v1, double *v2, int dimension) {
     return dp;
 }
 
-// Calculate the magnitude of a vector
+/*
+Function purpose: To calculate the magnitude of a vector
+Function inputs: 
+- The vector for which to claculate the magnitude
+- The dimension of that vector
+Function output: The magnitude of that vector, as a decimal
+*/
 double find_magnitude(double* v, int dimension) {
     double mangitude = 0;
     // Sum the squares
@@ -26,7 +38,13 @@ double find_magnitude(double* v, int dimension) {
     return mangitude;
 }
 
-// Perform vector normalisaition
+/*
+Function purpose: Perform vector normalisaition
+Function inputs:
+- The vector to normalise
+- The dimension of that vector
+Function output: An array represnting the normalised version of the input vector
+*/
 double* normalise(double* v, int dimension) {
     // Dynamically allocate memoery to normalised vector
     double* norm_v = malloc(dimension * sizeof(double));
@@ -49,7 +67,14 @@ double* normalise(double* v, int dimension) {
     return norm_v;
 }
 
-// Calculate the projection of one vector onto another one
+/*
+Function purpose: Calculate the projection of one vector onto another one
+Function inputs:
+- A vector v1 to be project
+- A vector v2 to prjected onto
+- The dimension of those vectors
+Function output: An array representing the vector projection of v1 onto v2
+*/
 double* minus_project(double* v1, double* v2, int dimension) {
     // Setup return vector
     double* project_v = malloc(dimension * sizeof(double));
@@ -82,7 +107,14 @@ double* minus_project(double* v1, double* v2, int dimension) {
     return project_v; 
 }
 
-// Perform Gram-Schmidt normalisation
+/*
+Function purpose: Perform Gram-Schmidt normalisation
+Function inputs: 
+- The basis matrix
+- The number of vectors in hte basis matrix
+- The dimension of those vectors
+Function output: A 2d array representing the basis matrix after being transformed via the Gram-Schmidt proccess
+*/
 double** gram_schdmit(double** vectors, int numVectors, int dimension) {
     // Dynamically declare 2d array holding copy of basis matrix
     double** U = (double**)malloc(numVectors * sizeof(double*));
