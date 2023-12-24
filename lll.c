@@ -93,6 +93,7 @@ double* minus_project(double* v1, double* v2, int dimension) {
     // Next, we divide those 2 values for each dimension
     if (mag_sq != 0) {
        double proj_fac = dp_result / mag_sq;
+       printf("Projection factor: %f\n", proj_fac);
         for (int i = 0; i < dimension; ++i) {
             // The projection factor is then multiplied by each component
             double projection = proj_fac * v2[i];
@@ -100,11 +101,33 @@ double* minus_project(double* v1, double* v2, int dimension) {
         } 
     } else {
         // Prevent /0 error
-        printf("Error, v1 has magnitude 0");
+        printf("Error, v2 has magnitude 0");
         free(project_v);
         return 0;
     }
     return project_v; 
+}
+
+/*
+Function purpose: To calculate the size 
+*/
+double get_size(double* old_second, double* new_first, int dimension) {
+    // Calculate the size using mod((b1 x b0*) / (b0* x b0*))
+    double numerator;
+    double denominator;
+    double v_size;
+
+    numerator = dot_product(old_second, new_first, dimension);
+    denominator = find_magnitude(new_first, dimension);
+    denominator *= denominator;
+
+    if (denominator != 0) {
+        v_size = numerator / denominator;
+        v_size = fabs(v_size);
+    } else {
+        return NULL;
+    }
+    return v_size;
 }
 
 /*
@@ -113,7 +136,7 @@ Function inputs:
 - The basis matrix
 - The number of vectors in hte basis matrix
 - The dimension of those vectors
-Function output: A 2d array representing the basis matrix after being transformed via the Gram-Schmidt proccess
+Function output: A 2d array representing the orthogonal basis of the orginal basis matrix
 */
 double** gram_schdmit(double** vectors, int numVectors, int dimension) {
     // Dynamically declare 2d array holding copy of basis matrix
@@ -160,6 +183,7 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
         }
         free(total_projection);
     }
+    /*
     // Finally, normalise the restulting U-matrix
     for (int i = 0; i < numVectors; ++i) {
         double* norm_u = normalise(U[i], dimension);
@@ -170,5 +194,13 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
             free(norm_u);
         }
     }
+    */
     return U;
+}
+
+double** lll_algorithm(double** vectors, int numVectors, int dimension) {
+    k = 1;
+    while (k <= numVectors) {
+
+    }
 }

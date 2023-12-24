@@ -30,10 +30,14 @@ int main(int argc, char *argv[]) {
     printf("\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
 
-    double** GS_Matrix;
-    GS_Matrix = gram_schdmit(basis_matrix, numVectors, dimension);
+    // Apply Gram Schmidt proccess
+    double** Orthog_Basis;
+    Orthog_Basis = gram_schdmit(basis_matrix, numVectors, dimension);
     printf("\n");
-    display_basis_matrix(GS_Matrix, numVectors, dimension);
+    display_basis_matrix(Orthog_Basis, numVectors, dimension);
+
+    double size = get_size(basis_matrix[1], Orthog_Basis[0], dimension);
+    printf("Size is: %f\n", size);
 
     // Free memory used up by basis matrix and vectors
     for (int i = 0; i < numVectors; ++i) {
