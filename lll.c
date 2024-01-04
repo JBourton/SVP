@@ -125,7 +125,8 @@ double get_size(double* old_second, double* new_first, int dimension) {
         v_size = numerator / denominator;
         v_size = fabs(v_size);
     } else {
-        return NULL;
+        // Note: here an error has occured due to /0 so should deal with it
+        return 0;
     }
     return v_size;
 }
@@ -133,10 +134,10 @@ double get_size(double* old_second, double* new_first, int dimension) {
 /*
 Function purpose: Perform Gram-Schmidt normalisation
 Function inputs: 
-- The basis matrix
-- The number of vectors in hte basis matrix
-- The dimension of those vectors
-Function output: A 2d array representing the orthogonal basis of the orginal basis matrix
+- The basis matrix 'vectors'
+- The number of vectors in hte basis matrix 'numVectors'
+- The dimension of those vectors 'dimension'
+Function output: A 2d array 'U' representing the orthogonal basis of the orginal basis matrix
 */
 double** gram_schdmit(double** vectors, int numVectors, int dimension) {
     // Dynamically declare 2d array holding copy of basis matrix
@@ -155,7 +156,7 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
         U[k] = vectors[k];
         // Calculate the sums of the projection vectors from 1 to k-1
         double* total_projection = malloc(dimension * sizeof(double));
-        // INitialse to 0
+        // Initialse to 0
         for (int i = 0; i < dimension; ++i) {
             total_projection[i] = 0;
         }
@@ -199,8 +200,21 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
 }
 
 double** lll_algorithm(double** vectors, int numVectors, int dimension) {
-    k = 1;
-    while (k <= numVectors) {
+    int k = 1;
 
-    }
+    // Apply Gram Schmidt proccess
+    double** Orthog_Basis;
+    Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+    display_basis_matrix(Orthog_Basis, numVectors, dimension);
+
+    //while (k <= numVectors) {
+    //    for (int j=k-1; j>=0; --j) {
+            // if not size_condition(i,j):
+            // math stuff, update gram schmidt
+    //    }
+        // Check lovasz condition
+        // if true, incremenet k
+        // else, perform swap, update gram schmidt and find new k-value
+    //}
+    // return reduced basis
 }
