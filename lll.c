@@ -68,14 +68,14 @@ double* normalise(double* v, int dimension) {
 }
 
 /*
-Function purpose: Calculate the projection of one vector onto another one
+Function purpose: Calculate the projection of one vector onto another
 Function inputs:
 - A vector v1 to be project
 - A vector v2 to prjected onto
 - The dimension of those vectors
 Function output: An array representing the vector projection of v1 onto v2
 */
-double* minus_project(double* v1, double* v2, int dimension) {
+double* minus_project(double* v1, double* v2, int dimension, double* proj_factor) {
     // Setup return vector
     double* project_v = malloc(dimension * sizeof(double));
     for (int i = 0; i < dimension; ++i) {
@@ -92,17 +92,18 @@ double* minus_project(double* v1, double* v2, int dimension) {
     
     // Next, we divide those 2 values for each dimension
     if (mag_sq != 0) {
-       double proj_fac = dp_result / mag_sq;
-       printf("Projection factor: %f\n", proj_fac);
+        *proj_factor = dp_result / mag_sq;
+        //printf("Projection factor: %f\n", *proj_fac);
         for (int i = 0; i < dimension; ++i) {
             // The projection factor is then multiplied by each component
-            double projection = proj_fac * v2[i];
+            double projection = *proj_factor * v2[i];
             project_v[i] += projection;
         } 
     } else {
         // Prevent /0 error
         printf("Error, v2 has magnitude 0");
         free(project_v);
+        *proj_factor = 0;
         return 0;
     }
     return project_v; 
@@ -139,7 +140,7 @@ Function inputs:
 - The dimension of those vectors 'dimension'
 Function output: A 2d array 'U' representing the orthogonal basis of the orginal basis matrix
 */
-double** gram_schdmit(double** vectors, int numVectors, int dimension) {
+double** gram_schdmit(double** vectors, int numVectors, int dimension, double* proj_factor) {
     // Dynamically declare 2d array holding copy of basis matrix
     double** U = (double**)malloc(numVectors * sizeof(double*));
     for (int i = 0; i < numVectors; ++i) {
@@ -149,8 +150,8 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
     // The first part of Gram-Schmidt involves setting u1 = v1
     U[0] = vectors[0];
 
-    // Next, we apply the minus_project function, subtracting each repsective component from its projection
-    // Equation: uk = vk - sum(i=1 to k-1) of vk projecting onto ui, where k is the vector number
+    /* Next, we apply the minus_project function, subtracting each repsective component from its projection
+       Equation: uk = vk - sum(i=1 to k-1) of vk projecting onto ui, where k is the vector number */
     for (int k = 1; k < numVectors; ++k) {
         // For every vector in the 2d array of vectors
         U[k] = vectors[k];
@@ -163,13 +164,13 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
         // Note: v1 is vk and v2 is ui
         for (int i = 0; i < k; ++i) {  
             // Calculate one of the prjections
-            double* row_projection = minus_project(vectors[k], U[i], dimension);
+            double* row_projection = minus_project(vectors[k], U[i], dimension, proj_factor);
 
-            // Print the contents of row_projection
+            /* Print the contents of row_projection
             for (int j = 0; j < dimension; ++j) {
                 printf("%f ", row_projection[j]);
             }
-            printf("\n");
+            printf("\n"); */
 
             // Add it to the running total
             for (int j = 0; j < dimension; ++j) {
@@ -200,12 +201,15 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
 }
 
 double** lll_algorithm(double** vectors, int numVectors, int dimension) {
+    // proj_factor will track of the current projection factor for use in the size condition check
+    double proj_factor;
     int k = 1;
 
     // Apply Gram Schmidt proccess
     double** Orthog_Basis;
-    Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+    Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);
     display_basis_matrix(Orthog_Basis, numVectors, dimension);
+    printf("Current projection factor: %f\n", proj_factor);
 
     //while (k <= numVectors) {
     //    for (int j=k-1; j>=0; --j) {
