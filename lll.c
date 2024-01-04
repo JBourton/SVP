@@ -110,29 +110,6 @@ double* minus_project(double* v1, double* v2, int dimension, double* proj_factor
 }
 
 /*
-Function purpose: To calculate the size 
-*/
-double get_size(double* old_second, double* new_first, int dimension) {
-    // Calculate the size using mod((b1 x b0*) / (b0* x b0*))
-    double numerator;
-    double denominator;
-    double v_size;
-
-    numerator = dot_product(old_second, new_first, dimension);
-    denominator = find_magnitude(new_first, dimension);
-    denominator *= denominator;
-
-    if (denominator != 0) {
-        v_size = numerator / denominator;
-        v_size = fabs(v_size);
-    } else {
-        // Note: here an error has occured due to /0 so should deal with it
-        return 0;
-    }
-    return v_size;
-}
-
-/*
 Function purpose: Perform Gram-Schmidt normalisation
 Function inputs: 
 - The basis matrix 'vectors'
@@ -211,14 +188,48 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     display_basis_matrix(Orthog_Basis, numVectors, dimension);
     printf("Current projection factor: %f\n", proj_factor);
 
-    //while (k <= numVectors) {
-    //    for (int j=k-1; j>=0; --j) {
+    while (k <= numVectors) {
+        for (int j=k-1; j>=0; --j) {
+            // Check size condition
+            if (proj_factor > 0.5) {
+                // vk = vk - proj_factor * bj 
+                double* GS_Coefficient_Vector = malloc(dimension * sizeof(double));
+                GS_Coefficient_Vector = multiply(vectors[k], proj_factor, dimension);
+
+                //  [DEBUG] Looks like vectors is being modified in the gram_schmidt funciton
+                printf("Original vector:");
+                for (int y = 0; y < dimension; ++y) {
+                    printf("%f ", vectors[k][y]);
+                }
+                printf("\n");
+
+                printf("Result of GS coefficient vector:");
+                for (int y = 0; y < dimension; ++y) {
+                    printf("%f ", GS_Coefficient_Vector[y]);
+                }
+                printf("\n");
+
+                for (int i = 0; i < dimension; ++i) {
+                    vectors[k][i] -= GS_Coefficient_Vector[i];
+                }   
+                free(GS_Coefficient_Vector);
+                
+                //  [DEBUG] Print the subtraction result
+                printf("Result of subtraction:");
+                for (int y = 0; y < dimension; ++y) {
+                    printf("%f ", vectors[k][y]);
+                }
+                printf("\n");
+                // Progress: TEST THIS PART    
+                // update gram schmidt         
+            }
             // if not size_condition(i,j):
             // math stuff, update gram schmidt
-    //    }
+        }
+        k += 1;
         // Check lovasz condition
         // if true, incremenet k
         // else, perform swap, update gram schmidt and find new k-value
-    //}
+    }
     // return reduced basis
 }

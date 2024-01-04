@@ -3,4 +3,5 @@
 #define SVP_STRUCTS_H
 // Basis matrix functions
 void display_basis_matrix(double** basis_matrix, int numVectors, int dimension);
+double* multiply(double* v, double factor, int dimension);
 #endif
