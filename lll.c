@@ -201,11 +201,8 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
                 }
                 printf("\n");
                 
-                // here check it
-                // int rounded_factor = (int)(proj_factor + 0.5);
                 for (int i = 0; i < dimension; ++i) {
                     vectors[k][i] -= GS_Coefficient_Vector[i];
-                    //vectors[k][i] -= rounded_factor -= GS_Coefficient_Vector[i];
                 }
 
 
