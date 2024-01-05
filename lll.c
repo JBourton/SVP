@@ -3,69 +3,7 @@
 #include <math.h>
 #include "lll.h"
 #include "svp_structs.h"
-
-/*
-Function purpose: Perform the dot product on 2 vectors
-Function inputs: 
-- 2 vectors to perform the dot product
-- dimension of those vectors
-Function output: An array representing the dot product of the 2 vectors
-*/ 
-double dot_product(double *v1, double *v2, int dimension) {
-    double dp = 0;
-    for (int i=0; i<dimension; ++i) {
-        // Multiply consecutve rows
-        dp += (v1[i] * v2[i]);
-    }
-    return dp;
-}
-
-/*
-Function purpose: To calculate the magnitude of a vector
-Function inputs: 
-- The vector for which to claculate the magnitude
-- The dimension of that vector
-Function output: The magnitude of that vector, as a decimal
-*/
-double find_magnitude(double* v, int dimension) {
-    double mangitude = 0;
-    // Sum the squares
-    for (int i=0;i<dimension;++i) {
-        mangitude += (v[i] * v[i]);
-    }
-    // Root the result
-    mangitude = sqrt(mangitude);
-    return mangitude;
-}
-
-/*
-Function purpose: Perform vector normalisaition
-Function inputs:
-- The vector to normalise
-- The dimension of that vector
-Function output: An array represnting the normalised version of the input vector
-*/
-double* normalise(double* v, int dimension) {
-    // Dynamically allocate memoery to normalised vector
-    double* norm_v = malloc(dimension * sizeof(double));
-    double v_magnitude = 0;
-
-    if (norm_v != NULL) {
-        v_magnitude = find_magnitude(v, dimension);
-
-        // Prevent /0 errors by testing for 0 mangitude
-        if (v_magnitude != 0) {
-            // Divide every component by its magnitude
-            for (int i = 0; i < dimension; ++i) {
-                norm_v[i] = v[i] / v_magnitude;
-            }
-        }
-    } else {
-        printf("Error, memory not available to allocate");
-        return NULL;  
-    }  
-    return norm_v;
-}
+#include <math.h>
 
 /*
 Function purpose: Calculate the projection of one vector onto another
@@ -123,16 +61,13 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
     for (int i = 0; i < numVectors; ++i) {
         U[i] = (double*)malloc(dimension * sizeof(double));
     }
-
-    // [DEBUG] Copy the input vectors to the new array
+    // Here, input vectos are copied ot an ew array
     for (int i = 0; i < numVectors; ++i) {
+         // This serves to also set u1 = v1
         for (int j = 0; j < dimension; ++j) {
             U[i][j] = vectors[i][j];
         }
     }
-
-    // The first part of Gram-Schmidt involves setting u1 = v1
-    //U[0] = vectors[0];
 
     /* Next, we apply the minus_project function, subtracting each repsective component from its projection
        Equation: uk = vk - sum(i=1 to k-1) of vk projecting onto ui, where k is the vector number */
