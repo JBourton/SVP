@@ -189,12 +189,11 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
                 }
                 printf("\n");
 
-                display_basis_matrix(vectors, numVectors, dimension);
-                printf("\n");
+                // Math: vk = vk - proj_factor * bj 
 
-                // vk = vk - proj_factor * bj 
-                // double* GS_Coefficient_Vector = malloc(dimension * sizeof(double));
-                double* GS_Coefficient_Vector = multiply(vectors[j], proj_factor, dimension);
+                // Round down projection factor
+                double rounded_proj_factor = floor(proj_factor);
+                double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
 
                 printf("[DEBUG] Result of GS coefficient vector:");
                 for (int y = 0; y < dimension; ++y) {
@@ -203,9 +202,9 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
                 printf("\n");
                 
                 // here check it
-                //int rounded_factor = (int)(proj_factor + 0.5);
+                // int rounded_factor = (int)(proj_factor + 0.5);
                 for (int i = 0; i < dimension; ++i) {
-                    vectors[k][i] -= rounded_factor -= GS_Coefficient_Vector[i];
+                    vectors[k][i] -= GS_Coefficient_Vector[i];
                     //vectors[k][i] -= rounded_factor -= GS_Coefficient_Vector[i];
                 }
 
