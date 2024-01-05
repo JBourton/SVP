@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include "svp_structs.h"
 
+// This file contains basic functions to be performed on the basis matrix 
+// and the vectors within it
+
 /*
 Function purpose: To print the basis
 Function inputs: 

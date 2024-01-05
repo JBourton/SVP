@@ -124,14 +124,21 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
         U[i] = (double*)malloc(dimension * sizeof(double));
     }
 
+    // [DEBUG] Copy the input vectors to the new array
+    for (int i = 0; i < numVectors; ++i) {
+        for (int j = 0; j < dimension; ++j) {
+            U[i][j] = vectors[i][j];
+        }
+    }
+
     // The first part of Gram-Schmidt involves setting u1 = v1
-    U[0] = vectors[0];
+    //U[0] = vectors[0];
 
     /* Next, we apply the minus_project function, subtracting each repsective component from its projection
        Equation: uk = vk - sum(i=1 to k-1) of vk projecting onto ui, where k is the vector number */
     for (int k = 1; k < numVectors; ++k) {
         // For every vector in the 2d array of vectors
-        U[k] = vectors[k];
+        //U[k] = vectors[k];
         // Calculate the sums of the projection vectors from 1 to k-1
         double* total_projection = malloc(dimension * sizeof(double));
         // Initialse to 0
@@ -141,13 +148,7 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
         // Note: v1 is vk and v2 is ui
         for (int i = 0; i < k; ++i) {  
             // Calculate one of the prjections
-            double* row_projection = minus_project(vectors[k], U[i], dimension, proj_factor);
-
-            /* Print the contents of row_projection
-            for (int j = 0; j < dimension; ++j) {
-                printf("%f ", row_projection[j]);
-            }
-            printf("\n"); */
+            double* row_projection = minus_project(U[k], U[i], dimension, proj_factor);
 
             // Add it to the running total
             for (int j = 0; j < dimension; ++j) {
@@ -162,18 +163,6 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
         }
         free(total_projection);
     }
-    /*
-    // Finally, normalise the restulting U-matrix
-    for (int i = 0; i < numVectors; ++i) {
-        double* norm_u = normalise(U[i], dimension);
-        if (norm_u != NULL) {
-            for (int j = 0; j < dimension; ++j) {
-                U[i][j] = norm_u[j];
-            }
-            free(norm_u);
-        }
-    }
-    */
     return U;
 }
 
@@ -187,38 +176,50 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);
     display_basis_matrix(Orthog_Basis, numVectors, dimension);
     printf("Current projection factor: %f\n", proj_factor);
+    printf("\n");
 
     while (k <= numVectors) {
         for (int j=k-1; j>=0; --j) {
             // Check size condition
             if (proj_factor > 0.5) {
-                // vk = vk - proj_factor * bj 
-                double* GS_Coefficient_Vector = malloc(dimension * sizeof(double));
-                GS_Coefficient_Vector = multiply(vectors[k], proj_factor, dimension);
-
                 //  [DEBUG] Looks like vectors is being modified in the gram_schmidt funciton
-                printf("Original vector:");
+                printf("[DEBUG] Original vector:");
                 for (int y = 0; y < dimension; ++y) {
-                    printf("%f ", vectors[k][y]);
+                    printf("%.2f ", vectors[k][y]);
                 }
                 printf("\n");
 
-                printf("Result of GS coefficient vector:");
-                for (int y = 0; y < dimension; ++y) {
-                    printf("%f ", GS_Coefficient_Vector[y]);
-                }
+                display_basis_matrix(vectors, numVectors, dimension);
                 printf("\n");
 
+                // vk = vk - proj_factor * bj 
+                // double* GS_Coefficient_Vector = malloc(dimension * sizeof(double));
+                double* GS_Coefficient_Vector = multiply(vectors[j], proj_factor, dimension);
+
+                printf("[DEBUG] Result of GS coefficient vector:");
+                for (int y = 0; y < dimension; ++y) {
+                    printf("%.2f ", GS_Coefficient_Vector[y]);
+                }
+                printf("\n");
+                
+                // here check it
+                //int rounded_factor = (int)(proj_factor + 0.5);
                 for (int i = 0; i < dimension; ++i) {
-                    vectors[k][i] -= GS_Coefficient_Vector[i];
-                }   
+                    vectors[k][i] -= rounded_factor -= GS_Coefficient_Vector[i];
+                    //vectors[k][i] -= rounded_factor -= GS_Coefficient_Vector[i];
+                }
+
+
                 free(GS_Coefficient_Vector);
                 
                 //  [DEBUG] Print the subtraction result
-                printf("Result of subtraction:");
+                printf("[DEBUG] Result of subtraction:");
                 for (int y = 0; y < dimension; ++y) {
-                    printf("%f ", vectors[k][y]);
+                    printf("%.2f ", vectors[k][y]);
                 }
+                printf("\n");
+
+                display_basis_matrix(vectors, numVectors, dimension);
                 printf("\n");
                 // Progress: TEST THIS PART    
                 // update gram schmidt         
