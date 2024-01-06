@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 #include "lll.h"
 #include "svp_structs.h"
-#include <math.h>
 
 /*
 Function purpose: Calculate the projection of one vector onto another
@@ -101,6 +101,26 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
     return U;
 }
 
+/*
+Function purpose: To calculate whether the basis meets the lovasz condition
+Function inputs:
+Function output: A boolean int (1/0)
+*/
+int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
+    // vk is the mangitude of the kth vector in the basis matrix
+    double vk = find_magnitude(v1, dimension);
+    double vk_minus_one = find_magnitude(v2, dimension);
+
+    // This will be multipleid by the (k-1)th vector magnitude for compairson
+    double lovasz_multiplier = pow(0.75 - gs_coefficient, 2);
+    lovasz_multiplier *= vk_minus_one;
+    
+    printf("Lovasz multiplier: %f\n", lovasz_multiplier);
+    printf("vk magnitude: %f\n", vk);
+
+    return (vk >= lovasz_multiplier);
+};
+
 double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
     double proj_factor;
@@ -117,49 +137,31 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
         for (int j=k-1; j>=0; --j) {
             // Check size condition
             if (proj_factor > 0.5) {
-                //  [DEBUG] Looks like vectors is being modified in the gram_schmidt funciton
-                printf("[DEBUG] Original vector:");
-                for (int y = 0; y < dimension; ++y) {
-                    printf("%.2f ", vectors[k][y]);
-                }
-                printf("\n");
-
-                // Math: vk = vk - proj_factor * bj 
-
-                // Round down projection factor
+                // Round down projection factor. Math: vk = vk - proj_factor * bj 
                 double rounded_proj_factor = floor(proj_factor);
                 double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
-
-                printf("[DEBUG] Result of GS coefficient vector:");
-                for (int y = 0; y < dimension; ++y) {
-                    printf("%.2f ", GS_Coefficient_Vector[y]);
-                }
-                printf("\n");
                 
                 for (int i = 0; i < dimension; ++i) {
                     vectors[k][i] -= GS_Coefficient_Vector[i];
                 }
 
-
                 free(GS_Coefficient_Vector);
-                
-                //  [DEBUG] Print the subtraction result
-                printf("[DEBUG] Result of subtraction:");
-                for (int y = 0; y < dimension; ++y) {
-                    printf("%.2f ", vectors[k][y]);
-                }
-                printf("\n");
 
                 display_basis_matrix(vectors, numVectors, dimension);
-                printf("\n");
-                // Progress: TEST THIS PART    
+                printf("\n");   
                 // update gram schmidt         
             }
             // if not size_condition(i,j):
             // math stuff, update gram schmidt
         }
-        k += 1;
-        // Check lovasz condition
+        // Increment k by 1 if lovasz condition True
+        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, rounded_proj_factor)) {
+            k += 1;
+        } else {
+
+        }
+        
+        
         // if true, incremenet k
         // else, perform swap, update gram schmidt and find new k-value
     }
