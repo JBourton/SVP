@@ -6,12 +6,43 @@
 #include "svp_structs.h"
 
 /*
+Function purpose: To find the projection factor for application in Gram Schmidt and LLL
+Function inputs:
+- A vector v1 to be project
+- A vector v2 to prjected onto
+- The dimension of those vectors
+Function output: A factor 'proj_factor' of type double
+*/
+double find_projection_fac(double* v1, double* v2, int dimension) {
+    double proj_factor;
+
+    // First, we find v1 dot v2
+    double dp_result = dot_product(v1, v2, dimension);
+
+    // Then we find the square of the magnitude of v2
+    double mag_sq = find_magnitude(v2, dimension);
+    mag_sq *= mag_sq;
+
+    if (mag_sq != 0) {
+        proj_factor = dp_result / mag_sq;
+    } else {
+        // Prevent /0 error
+        printf("Error, v2 has magnitude 0");
+        proj_factor = 0;
+        return 0;
+    }
+
+    return proj_factor;
+}
+
+/*
 Function purpose: Calculate the projection of one vector onto another
 Function inputs:
 - A vector v1 to be project
 - A vector v2 to prjected onto
 - The dimension of those vectors
-Function output: An array representing the vector projection of v1 onto v2
+- Projection factor globabl variable
+Function output: An array 'project_v' representing the vector projection of v1 onto v2
 */
 double* minus_project(double* v1, double* v2, int dimension, double* proj_factor) {
     // Setup return vector
@@ -21,25 +52,16 @@ double* minus_project(double* v1, double* v2, int dimension, double* proj_factor
     }
     // projection of v1 onto v2 = ((v1 dot v2) / (v2 mangitude)^2) * v2, which is applied below
     
-    // First, we find v1 dot v2
-    double dp_result = dot_product(v1, v2, dimension);
-
-    // Then we find the square of the magnitude of v2
-    double mag_sq = find_magnitude(v2, dimension);
-    mag_sq *= mag_sq;
+    *proj_factor = find_projection_fac(v1, v2, dimension);
     
     // Next, we divide those 2 values for each dimension
-    if (mag_sq != 0) {
-        *proj_factor = dp_result / mag_sq;
-        //printf("Projection factor: %f\n", *proj_fac);
+    if (*proj_factor != 0) {
         for (int i = 0; i < dimension; ++i) {
             // The projection factor is then multiplied by each component
             double projection = *proj_factor * v2[i];
             project_v[i] += projection;
         } 
     } else {
-        // Prevent /0 error
-        printf("Error, v2 has magnitude 0");
         free(project_v);
         *proj_factor = 0;
         return 0;
@@ -108,15 +130,21 @@ Function output: A boolean int (1/0)
 */
 int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
     // vk is the mangitude of the kth vector in the basis matrix
+    // basically square without the square rooting
     double vk = find_magnitude(v1, dimension);
+    vk = pow(vk, 2);
     double vk_minus_one = find_magnitude(v2, dimension);
+    vk_minus_one = pow(vk_minus_one, 2);
 
     // This will be multipleid by the (k-1)th vector magnitude for compairson
-    double lovasz_multiplier = pow(0.75 - gs_coefficient, 2);
+    double lovasz_multiplier = 0.75 - pow(gs_coefficient, 2);
+    printf("lovasz multplier before multiplication: %f\n", lovasz_multiplier);
     lovasz_multiplier *= vk_minus_one;
     
-    printf("Lovasz multiplier: %f\n", lovasz_multiplier);
     printf("vk magnitude: %f\n", vk);
+    printf("vk-1 magnitude: %f\n", vk_minus_one);
+    printf("gs_coefficient: %f\n", gs_coefficient);
+    printf("Lovasz multiplier: %f\n", lovasz_multiplier);
 
     return (vk >= lovasz_multiplier);
 };
@@ -124,6 +152,7 @@ int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
 double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
     double proj_factor;
+    double rounded_proj_factor;
     int k = 1;
 
     // Apply Gram Schmidt proccess
@@ -138,7 +167,7 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
             // Check size condition
             if (proj_factor > 0.5) {
                 // Round down projection factor. Math: vk = vk - proj_factor * bj 
-                double rounded_proj_factor = floor(proj_factor);
+                rounded_proj_factor = floor(proj_factor);
                 double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
                 
                 for (int i = 0; i < dimension; ++i) {
@@ -151,14 +180,14 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
                 printf("\n");   
                 // update gram schmidt         
             }
-            // if not size_condition(i,j):
-            // math stuff, update gram schmidt
         }
         // Increment k by 1 if lovasz condition True
-        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, rounded_proj_factor)) {
+        double updated_proj_fac = find_projection_fac(vectors[k], vectors[k-1], dimension);
+        printf("Projeciton factor updated for lovasz check: %f\n", updated_proj_fac);
+        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, updated_proj_fac)) {
             k += 1;
         } else {
-
+            k+=1;
         }
         
         
