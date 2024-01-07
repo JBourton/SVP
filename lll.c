@@ -138,13 +138,7 @@ int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
 
     // This will be multipleid by the (k-1)th vector magnitude for compairson
     double lovasz_multiplier = 0.75 - pow(gs_coefficient, 2);
-    printf("lovasz multplier before multiplication: %f\n", lovasz_multiplier);
     lovasz_multiplier *= vk_minus_one;
-    
-    printf("vk magnitude: %f\n", vk);
-    printf("vk-1 magnitude: %f\n", vk_minus_one);
-    printf("gs_coefficient: %f\n", gs_coefficient);
-    printf("Lovasz multiplier: %f\n", lovasz_multiplier);
 
     return (vk >= lovasz_multiplier);
 };
@@ -178,7 +172,7 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
 
                 display_basis_matrix(vectors, numVectors, dimension);
                 printf("\n");   
-                // update gram schmidt         
+                // update gram schmidt    
             }
         }
         // Increment k by 1 if lovasz condition True
@@ -187,7 +181,14 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, updated_proj_fac)) {
             k += 1;
         } else {
+            swap_vectors(vectors, dimension, k, k-1);
+            printf("Basis matrix after swap performed:\n");
+            display_basis_matrix(vectors, numVectors, dimension);
             k+=1;
+            
+            // Swap vectors[k] with vectors[k-1]
+            // Update Gram Schmidt
+            // Set k = to the maxo f k-1 and 1
         }
         
         

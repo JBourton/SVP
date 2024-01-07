@@ -6,4 +6,5 @@ double* multiply(double* v, double factor, int dimension);
 double find_magnitude(double* v, int dimension);
 double* normalise(double* v, int dimension);
 double dot_product(double* v1, double* v2, int dimension);
+void swap_vectors(double** basis_matrix, int dimension, int pos1, int pos2);
 #endif

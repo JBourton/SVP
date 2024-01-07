@@ -1,5 +1,6 @@
 #include<stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "svp_structs.h"
 
@@ -101,4 +102,23 @@ double* normalise(double* v, int dimension) {
         return NULL;  
     }  
     return norm_v;
+}
+
+/*
+Function purpose: To swap 2 vectors in a matrix
+Funciton inputs:
+- Basis matrix, 'basis_matrix', containing all the vectors in the basis
+- The dimension of each vector 'dimension'
+- The position of the vectors to swap, 'pos1/2'
+Funciton autput: The modified basis matrix with the swap performed
+*/
+void swap_vectors(double** basis_matrix, int dimension, int pos1, int pos2) {
+    // First, declare a temp varaible
+    double* temp_vector = (double*)malloc(dimension * sizeof(double));
+
+    memcpy(temp_vector, basis_matrix[pos1], dimension * sizeof(double));
+    memcpy(basis_matrix[pos1], basis_matrix[pos2], dimension * sizeof(double));
+    memcpy(basis_matrix[pos2], temp_vector, dimension * sizeof(double));
+
+    free(temp_vector);
 }
