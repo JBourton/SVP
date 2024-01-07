@@ -5,13 +5,15 @@
 #include "lll.h"
 #include "svp_structs.h"
 
+
+
 /*
 Function purpose: Calculate the projection of one vector onto another
 Function inputs:
 - A vector v1 to be project
 - A vector v2 to prjected onto
 - The dimension of those vectors
-Function output: An array representing the vector projection of v1 onto v2
+Function output: An array 'project_v' representing the vector projection of v1 onto v2
 */
 double* minus_project(double* v1, double* v2, int dimension, double* proj_factor) {
     // Setup return vector
@@ -108,15 +110,21 @@ Function output: A boolean int (1/0)
 */
 int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
     // vk is the mangitude of the kth vector in the basis matrix
+    // basically square without the square rooting
     double vk = find_magnitude(v1, dimension);
+    vk = pow(vk, 2);
     double vk_minus_one = find_magnitude(v2, dimension);
+    vk_minus_one = pow(vk_minus_one, 2);
 
     // This will be multipleid by the (k-1)th vector magnitude for compairson
     double lovasz_multiplier = pow(0.75 - gs_coefficient, 2);
+    printf("lovasz multplier before multiplication: %f\n", lovasz_multiplier);
     lovasz_multiplier *= vk_minus_one;
     
-    printf("Lovasz multiplier: %f\n", lovasz_multiplier);
     printf("vk magnitude: %f\n", vk);
+    printf("vk-1 magnitude: %f\n", vk_minus_one);
+    printf("gs_coefficient: %f\n", gs_coefficient);
+    printf("Lovasz multiplier: %f\n", lovasz_multiplier);
 
     return (vk >= lovasz_multiplier);
 };
@@ -124,6 +132,7 @@ int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
 double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
     double proj_factor;
+    double rounded_proj_factor;
     int k = 1;
 
     // Apply Gram Schmidt proccess
@@ -138,7 +147,7 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
             // Check size condition
             if (proj_factor > 0.5) {
                 // Round down projection factor. Math: vk = vk - proj_factor * bj 
-                double rounded_proj_factor = floor(proj_factor);
+                rounded_proj_factor = floor(proj_factor);
                 double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
                 
                 for (int i = 0; i < dimension; ++i) {
@@ -158,7 +167,7 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, rounded_proj_factor)) {
             k += 1;
         } else {
-
+            k+=1;
         }
         
         
