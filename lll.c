@@ -137,7 +137,7 @@ int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
     vk_minus_one = pow(vk_minus_one, 2);
 
     // This will be multipleid by the (k-1)th vector magnitude for compairson
-    double lovasz_multiplier = pow(0.75 - gs_coefficient, 2);
+    double lovasz_multiplier = 0.75 - pow(gs_coefficient, 2);
     printf("lovasz multplier before multiplication: %f\n", lovasz_multiplier);
     lovasz_multiplier *= vk_minus_one;
     
@@ -180,11 +180,11 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
                 printf("\n");   
                 // update gram schmidt         
             }
-            // if not size_condition(i,j):
-            // math stuff, update gram schmidt
         }
         // Increment k by 1 if lovasz condition True
-        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, rounded_proj_factor)) {
+        double updated_proj_fac = find_projection_fac(vectors[k], vectors[k-1], dimension);
+        printf("Projeciton factor updated for lovasz check: %f\n", updated_proj_fac);
+        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, updated_proj_fac)) {
             k += 1;
         } else {
             k+=1;
