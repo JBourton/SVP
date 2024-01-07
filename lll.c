@@ -5,7 +5,35 @@
 #include "lll.h"
 #include "svp_structs.h"
 
+/*
+Function purpose: To find the projection factor for application in Gram Schmidt and LLL
+Function inputs:
+- A vector v1 to be project
+- A vector v2 to prjected onto
+- The dimension of those vectors
+Function output: A factor 'proj_factor' of type double
+*/
+double find_projection_fac(double* v1, double* v2, int dimension) {
+    double proj_factor;
 
+    // First, we find v1 dot v2
+    double dp_result = dot_product(v1, v2, dimension);
+
+    // Then we find the square of the magnitude of v2
+    double mag_sq = find_magnitude(v2, dimension);
+    mag_sq *= mag_sq;
+
+    if (mag_sq != 0) {
+        proj_factor = dp_result / mag_sq;
+    } else {
+        // Prevent /0 error
+        printf("Error, v2 has magnitude 0");
+        proj_factor = 0;
+        return 0;
+    }
+
+    return proj_factor;
+}
 
 /*
 Function purpose: Calculate the projection of one vector onto another
@@ -13,6 +41,7 @@ Function inputs:
 - A vector v1 to be project
 - A vector v2 to prjected onto
 - The dimension of those vectors
+- Projection factor globabl variable
 Function output: An array 'project_v' representing the vector projection of v1 onto v2
 */
 double* minus_project(double* v1, double* v2, int dimension, double* proj_factor) {
@@ -23,25 +52,16 @@ double* minus_project(double* v1, double* v2, int dimension, double* proj_factor
     }
     // projection of v1 onto v2 = ((v1 dot v2) / (v2 mangitude)^2) * v2, which is applied below
     
-    // First, we find v1 dot v2
-    double dp_result = dot_product(v1, v2, dimension);
-
-    // Then we find the square of the magnitude of v2
-    double mag_sq = find_magnitude(v2, dimension);
-    mag_sq *= mag_sq;
+    *proj_factor = find_projection_fac(v1, v2, dimension);
     
     // Next, we divide those 2 values for each dimension
-    if (mag_sq != 0) {
-        *proj_factor = dp_result / mag_sq;
-        //printf("Projection factor: %f\n", *proj_fac);
+    if (*proj_factor != 0) {
         for (int i = 0; i < dimension; ++i) {
             // The projection factor is then multiplied by each component
             double projection = *proj_factor * v2[i];
             project_v[i] += projection;
         } 
     } else {
-        // Prevent /0 error
-        printf("Error, v2 has magnitude 0");
         free(project_v);
         *proj_factor = 0;
         return 0;
