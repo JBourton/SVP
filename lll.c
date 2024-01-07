@@ -172,7 +172,9 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
 
                 display_basis_matrix(vectors, numVectors, dimension);
                 printf("\n");   
-                // update gram schmidt    
+
+                // Update gram schmidt 
+                Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);   
             }
         }
         // Increment k by 1 if lovasz condition True
@@ -181,14 +183,18 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, updated_proj_fac)) {
             k += 1;
         } else {
+            // Swap vectors[k] with vectors[k-1]
             swap_vectors(vectors, dimension, k, k-1);
             printf("Basis matrix after swap performed:\n");
             display_basis_matrix(vectors, numVectors, dimension);
-            k+=1;
             
-            // Swap vectors[k] with vectors[k-1]
             // Update Gram Schmidt
+            printf("Basis matrix after updated Gram Schmidt:\n");
+            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);
+            display_basis_matrix(Orthog_Basis, numVectors, dimension);
+            printf("\n");  
             // Set k = to the maxo f k-1 and 1
+            k+=1;
         }
         
         
