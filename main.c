@@ -32,6 +32,9 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     basis_matrix = lll_algorithm(basis_matrix, numVectors, dimension);
+    printf("Final basis matrix after lll reduction:");
+    display_basis_matrix(basis_matrix, numVectors, dimension);
+    printf("\n");
 
     //double size = get_size(basis_matrix[1], Orthog_Basis[0], dimension);
     //printf("Size is: %f\n", size);

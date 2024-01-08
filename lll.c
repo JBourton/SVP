@@ -40,8 +40,8 @@ Function purpose: Calculate the projection of one vector onto another
 Function inputs:
 - A vector v1 to be project
 - A vector v2 to prjected onto
-- The dimension of those vectors
-- Projection factor globabl variable
+- The dimension of those vectors 'dimension'
+- Projection factor globabl variable 'proj_factor'
 Function output: An array 'project_v' representing the vector projection of v1 onto v2
 */
 double* minus_project(double* v1, double* v2, int dimension, double* proj_factor) {
@@ -126,6 +126,10 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
 /*
 Function purpose: To calculate whether the basis meets the lovasz condition
 Function inputs:
+- A vector v1 to be project
+- A vector v2 to prjected onto
+- The dimension of those vectors
+- The Gram Schmidt coeffcient 'gs_coefficient'
 Function output: A boolean int (1/0)
 */
 int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
@@ -143,6 +147,14 @@ int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient) {
     return (vk >= lovasz_multiplier);
 };
 
+/*
+Funtion purpose: To apply the LLL algorithm on a basis matrix
+Function inputs:
+- The basis matrix 'vectors'
+- The number of vectors in the basis matrix 'numVectors'
+- The dimenson of each of those vecors, 'dimension'
+Function output: The recued basis matrix
+*/
 double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
     double proj_factor;
@@ -192,14 +204,16 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
             printf("Basis matrix after updated Gram Schmidt:\n");
             Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);
             display_basis_matrix(Orthog_Basis, numVectors, dimension);
-            printf("\n");  
+            printf("\n");
+
             // Set k = to the maxo f k-1 and 1
-            k+=1;
+            k = fmax(k - 1, 1);
         }
-        
-        
-        // if true, incremenet k
-        // else, perform swap, update gram schmidt and find new k-value
     }
-    // return reduced basis
+    // Free memory used up by orthogonol basis matrix and the vectors within
+    for (int i = 0; i < numVectors; ++i) {
+        free(Orthog_Basis[i]);
+    }
+    free(Orthog_Basis);
+    return vectors;
 }
