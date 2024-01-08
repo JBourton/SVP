@@ -155,7 +155,7 @@ Function inputs:
 - The dimenson of each of those vecors, 'dimension'
 Function output: The recued basis matrix
 */
-double** lll_algorithm(double** vectors, int numVectors, int dimension) {
+void lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
     double proj_factor;
     double rounded_proj_factor;
@@ -179,7 +179,6 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
                 for (int i = 0; i < dimension; ++i) {
                     vectors[k][i] -= GS_Coefficient_Vector[i];
                 }
-
                 free(GS_Coefficient_Vector);
 
                 display_basis_matrix(vectors, numVectors, dimension);
@@ -211,13 +210,9 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
             k = fmax(k - 1, 1);
         }
     }
-    printf("End of lll algorithm reached\n");
-    display_basis_matrix(vectors, numVectors, dimension);
-    printf("\n");
     // Free memory used up by orthogonol basis matrix and the vectors within
     for (int i = 0; i < numVectors; ++i) {
         free(Orthog_Basis[i]);
     }
     free(Orthog_Basis);
-    return vectors;
 }
