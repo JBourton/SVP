@@ -31,18 +31,26 @@ int main(int argc, char *argv[]) {
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
-    basis_matrix = lll_algorithm(basis_matrix, numVectors, dimension);
-    printf("Final basis matrix after lll reduction:");
-    display_basis_matrix(basis_matrix, numVectors, dimension);
+    // Create a copy of basis to hold result of lll algoritjm application
+    double** lll_basis = malloc(numVectors * sizeof(double*));
+    for (int i = 0; i < numVectors; ++i) {
+        copy[i] = malloc(dimension * sizeof(double));
+        memcpy(copy[i], basis_matrix[i], dimension * sizeof(double));
+    }
+
+    // Apply the lll algorithm to the basis
+    basis_matrix = lll_algorithm(copy, numVectors, dimension);
+    printf("Final basis matrix after lll reduction:\n");
+    display_basis_matrix(copy, numVectors, dimension);
     printf("\n");
 
-    //double size = get_size(basis_matrix[1], Orthog_Basis[0], dimension);
-    //printf("Size is: %f\n", size);
-
-    // Free memory used up by basis matrix and vectors
+    // Free memory used up by basis matrices and vectors within
     for (int i = 0; i < numVectors; ++i) {
         free(basis_matrix[i]);
+        free(lll_basis[i]);
     }
     free(basis_matrix);
+    free(lll_basis);
+
     return 0;
 }

@@ -168,7 +168,7 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
     printf("Current projection factor: %f\n", proj_factor);
     printf("\n");
 
-    while (k <= numVectors) {
+    while (k < numVectors) {
         for (int j=k-1; j>=0; --j) {
             // Check size condition
             if (proj_factor > 0.5) {
@@ -191,9 +191,10 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
         }
         // Increment k by 1 if lovasz condition True
         double updated_proj_fac = find_projection_fac(vectors[k], vectors[k-1], dimension);
-        printf("Projeciton factor updated for lovasz check: %f\n", updated_proj_fac);
+        printf("Projection factor updated for lovasz check: %f\n", updated_proj_fac);
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, updated_proj_fac)) {
             k += 1;
+            printf("k is: %d\n", k);
         } else {
             // Swap vectors[k] with vectors[k-1]
             swap_vectors(vectors, dimension, k, k-1);
@@ -210,6 +211,9 @@ double** lll_algorithm(double** vectors, int numVectors, int dimension) {
             k = fmax(k - 1, 1);
         }
     }
+    printf("End of lll algorithm reached\n");
+    display_basis_matrix(vectors, numVectors, dimension);
+    printf("\n");
     // Free memory used up by orthogonol basis matrix and the vectors within
     for (int i = 0; i < numVectors; ++i) {
         free(Orthog_Basis[i]);
