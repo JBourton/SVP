@@ -33,7 +33,7 @@ Function inputs:
 - The dimension of the vector, 'dimension'
 Function output: A vector reprresenting the product of the vector an the constant
 */
-double* multiply(double* v, double factor, int dimension) {
+double* multiply(double* v, int factor, int dimension) {
     double* product = malloc(dimension * sizeof(double));
     for (int i = 0; i < dimension; ++i) {
         product[i] = v[i] * factor;

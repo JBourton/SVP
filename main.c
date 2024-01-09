@@ -27,22 +27,20 @@ int main(int argc, char *argv[]) {
             scanf("%le", &basis_matrix[i][j]);
         }
     }
-    printf("\n");
+    printf("\n1. Original Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
     // Apply the lll algorithm to the basis
     lll_algorithm(basis_matrix, numVectors, dimension);
-    printf("Final basis matrix after lll reduction:\n");
+    printf("\n3. Final basis matrix after lll reduction:\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
-    // Free memory used up by the basis matrix and vectors within
+    // Free memory used up by the basis matrix and vectrs within
     for (int i = 0; i < numVectors; ++i) {
         free(basis_matrix[i]);
     }
     free(basis_matrix);
-
-    printf("Jusssttt before return statement");
     return 0;
 }
