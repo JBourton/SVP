@@ -83,7 +83,7 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
     for (int i = 0; i < numVectors; ++i) {
         U[i] = (double*)malloc(dimension * sizeof(double));
     }
-    // Here, input vectos are copied ot an ew array
+    // Here, input vectos are copied ot a new array
     for (int i = 0; i < numVectors; ++i) {
          // This serves to also set u1 = v1
         for (int j = 0; j < dimension; ++j) {
@@ -159,6 +159,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
     double proj_factor;
     int rounded_proj_factor;
+    double size;
     int k = 1;
 
     // Apply Gram Schmidt proccess
@@ -171,7 +172,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
     while (k < numVectors) {
         for (int j=k-1; j>=0; --j) {
             // Check size condition
-            double size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
+            size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
             printf("Projection factor is: %f\n", size);
             if (size > 0.5) {
                 printf("\nFailed size check condition\n");
@@ -181,29 +182,27 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
                 double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
                 
                 for (int i = 0; i < dimension; ++i) {
-                    printf("Debug GS_Coefficient_Vector[i] %f\n", GS_Coefficient_Vector[i]);
                     vectors[k][i] -= GS_Coefficient_Vector[i];
                 }
                 free(GS_Coefficient_Vector);
 
-                // Error here: I want to update the original basis but doesn't seem to be doing anything
                 printf("\nUpdated Basis after projection subtraction\n");
                 display_basis_matrix(vectors, numVectors, dimension);
-                printf("\n");   
+                printf("\n");  
+
+                // Note: Here, Gram Schmidt is probably not taking into account the full calculation 
 
                 // Update gram schmidt 
                 Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);  
 
-                //printf("\nUpdated Gram Shdmidt basis after projection subtraction\n");
-                //display_basis_matrix(Orthog_Basis, numVectors, dimension);
-                //printf("\n");   
+                printf("\nRecomputed Gram Shdmidt basis after projection subtraction\n");
+                display_basis_matrix(Orthog_Basis, numVectors, dimension);
+                printf("\n");   
  
             }
         }
-        // Increment k by 1 if lovasz condition True
-        double updated_proj_fac = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
-        printf("Projection factor updated for lovasz check: %f\n", updated_proj_fac);
-        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, updated_proj_fac)) {
+        // Increment k by 1 if lovasz condition True   
+        if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, size)) {
             printf("\nPassed lovasz check, increment k\n");
             k += 1;
         } else {
