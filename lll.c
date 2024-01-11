@@ -44,7 +44,7 @@ Function inputs:
 - Projection factor globabl variable 'proj_factor'
 Function output: An array 'project_v' representing the vector projection of v1 onto v2
 */
-double* minus_project(double* v1, double* v2, int dimension, double* proj_factor) {
+double* minus_project(double* v1, double* v2, int dimension) {
     // Setup return vector
     double* project_v = malloc(dimension * sizeof(double));
     for (int i = 0; i < dimension; ++i) {
@@ -52,20 +52,15 @@ double* minus_project(double* v1, double* v2, int dimension, double* proj_factor
     }
     // projection of v1 onto v2 = ((v1 dot v2) / (v2 mangitude)^2) * v2, which is applied below
     
-    *proj_factor = find_projection_fac(v1, v2, dimension);
-    
+    double proj_factor = find_projection_fac(v1, v2, dimension);
+
     // Next, we divide those 2 values for each dimension
-    if (*proj_factor != 0) {
-        for (int i = 0; i < dimension; ++i) {
-            // The projection factor is then multiplied by each component
-            double projection = *proj_factor * v2[i];
-            project_v[i] += projection;
-        } 
-    } else {
-        free(project_v);
-        *proj_factor = 0;
-        return 0;
-    }
+    for (int i = 0; i < dimension; ++i) {
+        // The projection factor is then multiplied by each component
+        double projection = proj_factor * v2[i];
+        project_v[i] += projection;
+    } 
+
     return project_v; 
 }
 
@@ -77,7 +72,7 @@ Function inputs:
 - The dimension of those vectors 'dimension'
 Function output: A 2d array 'U' representing the orthogonal basis of the orginal basis matrix
 */
-double** gram_schdmit(double** vectors, int numVectors, int dimension, double* proj_factor) {
+double** gram_schdmit(double** vectors, int numVectors, int dimension) {
     // Dynamically declare 2d array holding copy of basis matrix
     double** U = (double**)malloc(numVectors * sizeof(double*));
     for (int i = 0; i < numVectors; ++i) {
@@ -95,20 +90,26 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension, double* p
        Equation: uk = vk - sum(i=1 to k-1) of vk projecting onto ui, where k is the vector number */
     for (int k = 1; k < numVectors; ++k) {
         // For every vector in the 2d array of vectors
-        //U[k] = vectors[k];
+
         // Calculate the sums of the projection vectors from 1 to k-1
         double* total_projection = malloc(dimension * sizeof(double));
         // Initialse to 0
         for (int i = 0; i < dimension; ++i) {
             total_projection[i] = 0;
         }
+        if (total_projection == NULL) {
+            printf("Total projectin is null\n");
+        }
+
         // Note: v1 is vk and v2 is ui
         for (int i = 0; i < k; ++i) {  
             // Calculate one of the prjections
-            double* row_projection = minus_project(U[k], U[i], dimension, proj_factor);
+            double* row_projection = minus_project(U[k], U[i], dimension);
 
             // Add it to the running total
             for (int j = 0; j < dimension; ++j) {
+                printf("total_projection[j]: %f\n", total_projection[j]);
+                printf("row_projection[j]: %f\n", row_projection[j]);
                 total_projection[j] += row_projection[j];
             }
             free(row_projection);
@@ -157,22 +158,24 @@ Function output: The recued basis matrix
 */
 void lll_algorithm(double** vectors, int numVectors, int dimension) {
     // proj_factor will track of the current projection factor for use in the size condition check
-    double proj_factor;
     int rounded_proj_factor;
     double size;
     int k = 1;
 
     // Apply Gram Schmidt proccess
     double** Orthog_Basis;
-    Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);
+    Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
     printf("\n2. Gram Shcmidt after first Gram Shcmidt application\n");
     display_basis_matrix(Orthog_Basis, numVectors, dimension);
     printf("\n");
 
     while (k < numVectors) {
+        printf("\n---------------------------\n");
+        printf("k is: %d\n", k);
+        printf("---------------------------\n\n");
         for (int j=k-1; j>=0; --j) {
             // Check size condition
-            size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
+            size = find_projection_fac(vectors[k], Orthog_Basis[j], dimension);
             printf("Projection factor is: %f\n", size);
             if (size > 0.5) {
                 printf("\nFailed size check condition\n");
@@ -188,25 +191,25 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
 
                 printf("\nUpdated Basis after projection subtraction\n");
                 display_basis_matrix(vectors, numVectors, dimension);
-                printf("\n");  
-
-                // Note: Here, Gram Schmidt is probably not taking into account the full calculation 
-
-                // Update gram schmidt 
-                Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);  
-
-                printf("\nRecomputed Gram Shdmidt basis after projection subtraction\n");
-                display_basis_matrix(Orthog_Basis, numVectors, dimension);
-                printf("\n");   
- 
+                printf("\n");      
+            } else {
+                printf("Passed size check condition\n");
             }
         }
         // Increment k by 1 if lovasz condition True   
+        size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, size)) {
             printf("\nPassed lovasz check, increment k\n");
             k += 1;
+
+            // Note: Here, Gram Schmidt is probably not taking into account the full calculation 
+            // Update gram schmidt 
+            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);  
+            printf("\nRecomputed Gram Shdmidt basis after projection subtraction\n\n");
+            display_basis_matrix(Orthog_Basis, numVectors, dimension);
+            printf("\n");   
         } else {
-            printf("\nFailed lovasz check, swap vectors k & k-1 & update GS\n");
+            printf("\nFailed lovasz check, swap vectors k & k-1 & update GS\n\n");
             // Swap vectors[k] with vectors[k-1]
             swap_vectors(vectors, dimension, k, k-1);
             printf("Basis matrix after swap performed:\n");
@@ -215,7 +218,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
 
             // Update Gram Schmidt
             printf("Gram Schdmit matrix after updated Basis calculation:\n");
-            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension, &proj_factor);
+            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
             display_basis_matrix(Orthog_Basis, numVectors, dimension);
             printf("\n");
 
