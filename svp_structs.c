@@ -122,3 +122,11 @@ void swap_vectors(double** basis_matrix, int dimension, int pos1, int pos2) {
 
     free(temp_vector);
 }
+
+void free_structs_mem(double ** basis_matrix, int num_vectors, char *mega_input) {
+    free(mega_input);
+    for (int i = 0; i < num_vectors; ++i) {
+        free(basis_matrix[i]);
+    }
+    free(basis_matrix);
+}

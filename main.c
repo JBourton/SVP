@@ -13,6 +13,8 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    int numVectors;
+    int dimension;
     int open_brackets = 0;
     int closing_brackets = 0;
 
@@ -35,13 +37,28 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    // Declare basis arrays (pre and post lll)  + dyanmically allocate memory
+    numVectors = open_brackets;
+    dimension = open_brackets;
+    double** basis_matrix;
+    basis_matrix = (double**)malloc(numVectors * sizeof(double*));
+
+    // Create specified number of vectors
+    for (int i = 0; i < numVectors; ++i) {
+        basis_matrix[i] = (double*)malloc(dimension * sizeof(double));
+        if (basis_matrix[i] == NULL) {
+            printf("[MEMORY ALLOCATION ERROR]\n");
+            return 0;
+        }
+    }
+
     // Assign dynamic memory to the string containing all the inputs
     char *mega_input = (char *)malloc(input_length);
     if (mega_input == NULL) {
         printf("[MEMORY ALLOCATION ERROR]\n");
+        free_structs_mem(basis_matrix, numVectors, mega_input);
         return 0;
     }
-
     // Put the inividaul commandl ine arguments into a single string
     for (int i = 1; i < argc; ++i) {
         strcat(mega_input, argv[i]);
@@ -51,35 +68,51 @@ int main(int argc, char *argv[]) {
     }
     printf("Concatenated String: %s\n", mega_input);
 
+    // Extract vectors within square brackets
+    int megastring_index = 0;
+    for (int i = 0; i < numVectors; i++) {
+        if (mega_input[megastring_index] != '[') {
+            printf("[INPUT ERROR] Missing opening bracket '['\n");
+            free_structs_mem(basis_matrix, numVectors, mega_input);
+            return 0;
+        }
 
+        // RESUME WORK ON THIS BIT
+        // Initialisie an empty substring to hold one of the vecors
+        char *individual_vector = (char *)malloc(input_length);
+        if (individual_vector == NULL) {
+            printf("[MEMORY ALLOCATION ERROR]\n");
+            free_structs_mem(basis_matrix, numVectors, mega_input);
+            return 0;
+        }
+        individual_vector[0] = '\0';
 
-    free(mega_input);
-
-    // Also need to validate instances where brackets could match count but be wrong e.g. []5[[]-]
-
-
-    int numVectors;
-    int dimension;
-    printf("Enter the number of vectors: ");
-    scanf("%d", &numVectors);
-    printf("Enter the dimension: ");
-    scanf("%d", &dimension);
-    printf("\n");
-
-    // Declare basis arrays (pre and post lll)  + dyanmically allocate memory
-    double** basis_matrix;
-    basis_matrix = (double**)malloc(numVectors * sizeof(double*));
-
-    // Create specified number of vectors
-    for (int i = 0; i < numVectors; ++i) {
-        basis_matrix[i] = (double*)malloc(dimension * sizeof(double));
-        printf("\n");
-        printf("Input vector number %d:\n\n", i + 1);
-        for (int j = 0; j < dimension; ++j) {
-            printf("Input element %d\n", j + 1);
-            scanf("%le", &basis_matrix[i][j]);
+        for (size_t j = 1; j < input_length && mega_input[j] != '\0'; ++i) {     
+            // Append the next character in the masterstring to the current vector substring
+            if (mega_input[j] != ']') {
+                strncat(individual_vector, &mega_input[j], 1);
+                megastring_index += 1;
+            }
+        }
+        size_t vector_len = strlen(individual_vector);
+        if (vector_len > 0 && individual_vector[vector_len- 1] == ']') {
+            // Add one to the index to account for the closing square bracket
+            megastring_index += 1;
+            
+            // Add individual_vector to the vector structure
+            
+            free(individual_vector);
+        } else {
+            printf("[INPUT ERROR] Missing closing bracket ']'\n");
+            free_structs_mem(basis_matrix, numVectors, mega_input);
+            return 0;
         }
     }
+
+    // check exactly the right amount of vectors are create
+    // If a space appears in the string, count that as one of the inputs
+    // Also need to validate instances where brackets could match count but be wrong e.g. []5[[]-]
+
     printf("\n1. Original Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
@@ -91,9 +124,6 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     // Free memory used up by the basis matrix and vectrs within
-    for (int i = 0; i < numVectors; ++i) {
-        free(basis_matrix[i]);
-    }
-    free(basis_matrix);
+    free_structs_mem(basis_matrix, numVectors, mega_input);
     return 0;
 }
