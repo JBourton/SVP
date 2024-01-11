@@ -7,9 +7,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 
 # State source files
-SOURCES = main.c svp_structs.c lll.c
+SOURCES = main.c svp_structs.c lll.c command_line.c
 
-HEADERS = svp_structs.h lll.h
+HEADERS = svp_structs.h lll.h command_line.h
 
 # Set executable name
 EXECUTABLE = runme

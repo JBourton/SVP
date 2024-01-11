@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include "svp_structs.h"
 #include "lll.h"
+#include "command_line.h"
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
@@ -15,31 +16,17 @@ int main(int argc, char *argv[]) {
 
     int numVectors;
     int dimension;
-    int open_brackets = 0;
-    int closing_brackets = 0;
-
-    // Make 1 big string from all the command line arguments
-    size_t input_length = 0;
-
-    // Check number of opening and closing brackets match
-    for (int i=1; i<argc; i++) {
-        if (strncmp(argv[i],"[", 1) == 0) {
-            open_brackets += 1;
-        }
-        size_t input_item = strlen(argv[i]);
-        input_length += input_item + 1;
-        if (input_item > 0 && argv[i][input_item- 1] == ']') {
-            closing_brackets += 1;
-        }
-    }
-    if (open_brackets != closing_brackets) {
-        printf("[INPUT ERROR] Number of openinig and closing brackets do not match\n");
+    
+    // Check that there's an equal number of closing brackets compared to opening brackets
+    if (check_brackets_match(argc, argv) == 1) {
+        // Number of bracket sets = number of vectors
+        numVectors = get_bracket_count(argc, argv);
+        dimension = numVectors;
+    } else {
         return 0;
     }
 
-    // Declare basis arrays (pre and post lll)  + dyanmically allocate memory
-    numVectors = open_brackets;
-    dimension = open_brackets;
+    // Declare basis arrays  + dyanmically allocate memory
     double** basis_matrix;
     basis_matrix = (double**)malloc(numVectors * sizeof(double*));
 
@@ -51,6 +38,9 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     }
+
+    size_t input_length = get_input_length(argc, argv);
+
 
     // Assign dynamic memory to the string containing all the inputs
     char *mega_input = (char *)malloc(input_length);
@@ -73,8 +63,6 @@ int main(int argc, char *argv[]) {
 
     // Extract vectors within square brackets
     for (int i = 0; i < numVectors; i++) {
-        printf("[DEBUG] megastring index: %d\n", megastring_index);
-
         if (mega_input[megastring_index] != '[') {
             printf("[INPUT ERROR] Missing opening bracket '['\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
