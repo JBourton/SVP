@@ -68,45 +68,95 @@ int main(int argc, char *argv[]) {
     }
     printf("Concatenated String: %s\n", mega_input);
 
-    // Extract vectors within square brackets
+    // Megastring index keeps track of what part of the command line input to process
     int megastring_index = 0;
+
+    // Extract vectors within square brackets
     for (int i = 0; i < numVectors; i++) {
+        printf("[DEBUG] megastring index: %d\n", megastring_index);
+
         if (mega_input[megastring_index] != '[') {
             printf("[INPUT ERROR] Missing opening bracket '['\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
             return 0;
         }
 
-        // RESUME WORK ON THIS BIT
-        // Initialisie an empty substring to hold one of the vecors
+        // Initialisie an empty substring to hold the curent vector
         char *individual_vector = (char *)malloc(input_length);
         if (individual_vector == NULL) {
             printf("[MEMORY ALLOCATION ERROR]\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
             return 0;
         }
-        individual_vector[0] = '\0';
+        individual_vector[0] = '[';
+        individual_vector[1] = '\0';
 
-        for (size_t j = 1; j < input_length && mega_input[j] != '\0'; ++i) {     
+        // Extract a substring containing everything between (and including) the next set of square brackets
+        for (size_t j = 1; j < input_length && mega_input[j] != '\0'; ++j) {     
             // Append the next character in the masterstring to the current vector substring
-            if (mega_input[j] != ']') {
-                strncat(individual_vector, &mega_input[j], 1);
+            strncat(individual_vector, &mega_input[megastring_index + 1], 1);
+            if (mega_input[megastring_index + 1] == '[') {
+                // An opening bracket has been found before a closing one        
+                printf("[INPUT ERROR] Misalignment of open brackets\n");
+                free_structs_mem(basis_matrix, numVectors, mega_input);
+                return 0;
+            } else if (mega_input[megastring_index + 1] == ']') {
+                // A closing bracket has been found, exit loop
+                megastring_index += 1;
+                break;
+            } else {
                 megastring_index += 1;
             }
         }
+
+        
         size_t vector_len = strlen(individual_vector);
         if (vector_len > 0 && individual_vector[vector_len- 1] == ']') {
             // Add one to the index to account for the closing square bracket
             megastring_index += 1;
             
             // Add individual_vector to the vector structure
-            
-            free(individual_vector);
+            printf("\n[DEBUG] Individual_Vector: %s\n", individual_vector);
+
+            if (vector_len < 3) {
+                printf("[INPUT ERROR] Empty vectors not allowed\n");
+                free_structs_mem(basis_matrix, numVectors, mega_input);
+                return 0;
+            }
+
+            // Create a substring holding the new vector without the brackets
+            char* values = (char*)malloc(vector_len - 1);
+            if (values == NULL) {
+                printf("[MEMORY ALLOCATION ERROR]\n");
+                free_structs_mem(basis_matrix, numVectors, mega_input);
+                return 0;
+            }
+
+            strncpy(values, individual_vector + 1, input_length - 2);
+            values[vector_len - 2] = '\0';
+
+            printf("[DEBUG] values substring: %s\n", values);
+
+            // Now extract each space-seperated value and attempt to convert to int to store in a vector
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
             return 0;
         }
+
+        // Progress pointer to next vector
+        if(i < numVectors-1) {
+            if (mega_input[megastring_index] == ' ' && mega_input[megastring_index + 1] == '[') {
+                megastring_index += 1;
+            } else {
+                printf("[INPUT ERROR] Each vector must be seperated with a singular space\n");
+                free_structs_mem(basis_matrix, numVectors, mega_input);
+                return 0;
+            }
+        } else {
+            // deal with the case of [][] where i = numvectors-1
+        }
+        free(individual_vector);
     }
 
     // check exactly the right amount of vectors are create
