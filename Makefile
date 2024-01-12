@@ -1,5 +1,3 @@
-# Makefiles compile all files and headers in one, saving manually entering them into the command line
-
 # Specify compiler
 CC = gcc
 
@@ -7,9 +5,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 
 # State source files
-SOURCES = main.c svp_structs.c lll.c command_line.c
+SOURCES = main.c svp_structs.c lll.c command_line.c svp_application.c
 
-HEADERS = svp_structs.h lll.h command_line.h
+HEADERS = svp_structs.h lll.h command_line.h svp_application.h
 
 # Set executable name
 EXECUTABLE = runme
