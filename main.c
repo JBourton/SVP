@@ -187,8 +187,8 @@ int main(int argc, char *argv[]) {
     double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
     FILE *result_file = fopen("result.txt", "w");
     if (result_file != NULL) {
-        fprintf(result_file, "%d", shortest_euclidean_norm);
-        fclose(file);
+        fprintf(result_file, "%f", shortest_euclidean_norm);
+        fclose(result_file);
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be opened");
     }
