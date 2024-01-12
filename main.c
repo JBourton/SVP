@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
             strcat(mega_input, " ");
         }
     }
-    printf("Concatenated String: %s\n", mega_input);
+    // [DEBUG] printf("Concatenated String: %s\n", mega_input);
 
     // Megastring index keeps track of what part of the command line input to process
     int megastring_index = 0;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
             megastring_index += 1;
             
             // Add individual_vector to the vector structure
-            printf("\n[DEBUG] Individual_Vector: %s\n", individual_vector);
+            // printf("\n[DEBUG] Individual_Vector: %s\n", individual_vector);
 
             if (vector_len < 3) {
                 printf("[INPUT ERROR] Empty vectors not allowed\n");
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
             strncpy(values, individual_vector + 1, vector_len - 2);
             values[vector_len - 2] = '\0';
 
-            printf("[DEBUG] values substring: %s\n", values);
+            // printf("[DEBUG] values substring: %s\n", values);
 
             // Now extract each space-seperated value and attempt to convert to double to store in a vector in the basis
             int pos = 0;
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
                     printf("[INPUT ERROR] Please input only doubles in your vectors\n");
                     return 0;
                 }
-                printf("Converted to double: %f\n", num);
+                // [DEBUG] printf("Converted to double: %f\n", num);
 
                 // If conversion successful, place tokenised value in a basis vector
                 basis_matrix[i][pos] = num;
@@ -172,13 +172,13 @@ int main(int argc, char *argv[]) {
     // If a space appears in the string, count that as one of the inputs
     // Also need to validate instances where brackets could match count but be wrong e.g. []5[[]-]
 
-    printf("\n1. Original Basis Matrix\n");
+    printf("1. Original Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
     // Apply the lll algorithm to the basis
     lll_algorithm(basis_matrix, numVectors, dimension);
-    printf("\n3. Final basis matrix after lll reduction:\n");
+    printf("\n2. Final basis matrix after lll reduction:\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 

@@ -108,8 +108,8 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
 
             // Add it to the running total
             for (int j = 0; j < dimension; ++j) {
-                printf("total_projection[j]: %f\n", total_projection[j]);
-                printf("row_projection[j]: %f\n", row_projection[j]);
+                // [DEBUG] printf("total_projection[j]: %f\n", total_projection[j]);
+                // [DEBUG] printf("row_projection[j]: %f\n", row_projection[j]);
                 total_projection[j] += row_projection[j];
             }
             free(row_projection);
@@ -165,23 +165,23 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
     // Apply Gram Schmidt proccess
     double** Orthog_Basis;
     Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
-    printf("\n2. Gram Shcmidt after first Gram Shcmidt application\n");
-    display_basis_matrix(Orthog_Basis, numVectors, dimension);
-    printf("\n");
+    // [DEBUG] printf("\n2. Gram Shcmidt after first Gram Shcmidt application\n");
+    // display_basis_matrix(Orthog_Basis, numVectors, dimension);
+    // printf("\n");
 
     while (k < numVectors) {
-        printf("\n---------------------------\n");
-        printf("k is: %d\n", k);
-        printf("---------------------------\n\n");
+        // [DEBUG] printf("\n---------------------------\n");
+        // printf("k is: %d\n", k);
+        // printf("---------------------------\n\n");
         for (int j=k-1; j>=0; --j) {
             // Check size condition
             size = find_projection_fac(vectors[k], Orthog_Basis[j], dimension);
-            printf("Projection factor is: %f\n", size);
+            // [DEBUG] printf("Projection factor is: %f\n", size);
             if (size > 0.5) {
-                printf("\nFailed size check condition\n");
+                // [DEBUG] printf("\nFailed size check condition\n");
                 // Round down projection factor. Math: vk = vk - proj_factor * bj 
                 rounded_proj_factor = round(size);
-                printf("Rounded projection factor is: %d\n", rounded_proj_factor);
+                // [DEBUG] printf("Rounded projection factor is: %d\n", rounded_proj_factor);
                 double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
                 
                 for (int i = 0; i < dimension; ++i) {
@@ -189,38 +189,38 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
                 }
                 free(GS_Coefficient_Vector);
 
-                printf("\nUpdated Basis after projection subtraction\n");
-                display_basis_matrix(vectors, numVectors, dimension);
-                printf("\n");      
-            } else {
-                printf("Passed size check condition\n");
-            }
+                // [DEBUG] printf("\nUpdated Basis after projection subtraction\n");
+                // display_basis_matrix(vectors, numVectors, dimension);
+                // printf("\n");      
+            } // else {
+                //printf("Passed size check condition\n");
+            //}
         }
         // Increment k by 1 if lovasz condition True   
         size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, size)) {
-            printf("\nPassed lovasz check, increment k\n");
+            // [DEBUG] printf("\nPassed lovasz check, increment k\n");
             k += 1;
 
             // Note: Here, Gram Schmidt is probably not taking into account the full calculation 
             // Update gram schmidt 
             Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);  
-            printf("\nRecomputed Gram Shdmidt basis after projection subtraction\n\n");
-            display_basis_matrix(Orthog_Basis, numVectors, dimension);
-            printf("\n");   
+            // [DEBUG] printf("\nRecomputed Gram Shdmidt basis after projection subtraction\n\n");
+            // display_basis_matrix(Orthog_Basis, numVectors, dimension);
+            // printf("\n");   
         } else {
-            printf("\nFailed lovasz check, swap vectors k & k-1 & update GS\n\n");
+            // [DEBUG] printf("\nFailed lovasz check, swap vectors k & k-1 & update GS\n\n");
             // Swap vectors[k] with vectors[k-1]
             swap_vectors(vectors, dimension, k, k-1);
-            printf("Basis matrix after swap performed:\n");
-            display_basis_matrix(vectors, numVectors, dimension);
-            printf("\n");
+            // [DEBUG] printf("Basis matrix after swap performed:\n");
+            // display_basis_matrix(vectors, numVectors, dimension);
+            // printf("\n");
 
             // Update Gram Schmidt
-            printf("Gram Schdmit matrix after updated Basis calculation:\n");
+            // [DEBUG] printf("Gram Schdmit matrix after updated Basis calculation:\n");
             Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
-            display_basis_matrix(Orthog_Basis, numVectors, dimension);
-            printf("\n");
+            // display_basis_matrix(Orthog_Basis, numVectors, dimension);
+            // printf("\n");
 
             // Set k = to the maxo f k-1 and 1
             k = fmax(k - 1, 1);
