@@ -185,6 +185,9 @@ int main(int argc, char *argv[]) {
 
     // Finally, the result of enumaratin on the reduced basis is then written to a text file
     double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
+    if (shortest_euclidean_norm == 0) {
+        return 0;
+    }
     FILE *result_file = fopen("result.txt", "w");
     if (result_file != NULL) {
         fprintf(result_file, "%f", shortest_euclidean_norm);
