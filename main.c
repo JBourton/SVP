@@ -123,20 +123,18 @@ int main(int argc, char *argv[]) {
 
             printf("[DEBUG] values substring: %s\n", values);
 
-            // Now extract each space-seperated value and attempt to convert to double to store in a vector
+            // Now extract each space-seperated value and attempt to convert to double to store in a vector in the basis
             int pos = 0;
             char* value = strtok(values, " ");
             while (value != NULL) {
                 double num = strtod(value, NULL);
                 if (num == 0 && value[0] != '0') {
-                    printf("[INPUT ERROR] Please input only doubles in your vectors");
+                    printf("[INPUT ERROR] Please input only doubles in your vectors\n");
                     return 0;
                 }
-                // [DEBUG] print token value
                 printf("Converted to double: %f\n", num);
 
                 // If conversion successful, place tokenised value in a basis vector
-                // [DEBUG] NEED K
                 basis_matrix[i][pos] = num;
                 pos += 1;
 
@@ -144,20 +142,6 @@ int main(int argc, char *argv[]) {
                 value = strtok(NULL, " ");
             }
             printf("\n");
-
-
-            //int substring_index = 0;
-            //size_t vector_len = strlen(individual_vector);
-            //for (k=0; k<dimension; k++) {
-                // Pick out each number
-            //    for (y = 1; y < input_length && mega_input[y] != '\0'; ++y) {
-                    
-            //    }
-                // Find from position 0 up until when a space occurs
-                // Then try to convert to double
-                // Finally, assing that value to the vector
-                // can do basis_matrix[i][k] to access the right element
-            //}
 
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
@@ -176,6 +160,10 @@ int main(int argc, char *argv[]) {
             }
         } else {
             // deal with the case of [][] where i = numvectors-1
+            if (mega_input[megastring_index] != '\0') {
+                printf("[INPUT ERROR] Double brackets are not allowed\n");
+                return 0;
+            }
         }
         free(individual_vector);
     }
