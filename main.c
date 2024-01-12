@@ -39,17 +39,15 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    size_t input_length = get_input_length(argc, argv);
-
-
     // Assign dynamic memory to the string containing all the inputs
+    size_t input_length = get_input_length(argc, argv);
     char *mega_input = (char *)malloc(input_length);
     if (mega_input == NULL) {
         printf("[MEMORY ALLOCATION ERROR]\n");
         free_structs_mem(basis_matrix, numVectors, mega_input);
         return 0;
     }
-    // Put the inividaul commandl ine arguments into a single string
+    // Put the inividaul command line arguments into a single string
     for (int i = 1; i < argc; ++i) {
         strcat(mega_input, argv[i]);
         if (i < argc - 1) {
@@ -113,19 +111,33 @@ int main(int argc, char *argv[]) {
             }
 
             // Create a substring holding the new vector without the brackets
-            char* values = (char*)malloc(vector_len - 1);
+            char* values = (char*)malloc(vector_len);
             if (values == NULL) {
                 printf("[MEMORY ALLOCATION ERROR]\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 return 0;
             }
 
-            strncpy(values, individual_vector + 1, input_length - 2);
+            strncpy(values, individual_vector + 1, vector_len - 2);
             values[vector_len - 2] = '\0';
 
             printf("[DEBUG] values substring: %s\n", values);
 
-            // Now extract each space-seperated value and attempt to convert to int to store in a vector
+            // Now extract each space-seperated value and attempt to convert to double to store in a vector
+            // int substring_index = 0;
+            //for (k=0; k<dimension; k++) {
+                
+                // Find from position 0 up until when a space occurs
+                // Then try to convert to double
+                // Finally, assing that value to the vector
+                // can do basis_matrix[i][k] to access the right element
+            //}
+
+
+
+
+
+
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
