@@ -5,6 +5,7 @@
 #include "svp_structs.h"
 #include "lll.h"
 #include "command_line.h"
+#include "svp_application.h"
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
@@ -181,6 +182,16 @@ int main(int argc, char *argv[]) {
     printf("\n2. Final basis matrix after lll reduction:\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
+
+    // Finally, the result of enumaratin on the reduced basis is then written to a text file
+    double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
+    FILE *result_file = fopen("result.txt", "w");
+    if (result_file != NULL) {
+        fprintf(result_file, "%d", shortest_euclidean_norm);
+        fclose(file);
+    } else {
+        printf("[FILE ERROR]: 'result.txt' could not be opened");
+    }
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);
