@@ -4,7 +4,7 @@
 #include <math.h>
 #include "svp_structs.h"
 
-// This file contains basic functions to be performed on the basis matrix 
+// This file contains basic functions to be performed on the basis matrix
 // and the vectors within it
 
 /*
@@ -15,7 +15,9 @@ Function inputs:
 - The dimension of each vector 'dimension'
 Function output: The basis printed to the screen
 */
-void display_basis_matrix(double** basis_matrix, int numVectors, int dimension) {
+void display_basis_matrix(double** basis_matrix,
+                            int numVectors,
+                            int dimension) {
     printf("Basis Matrix:\n");
     for (int i = 0; i < numVectors; i++) {
         for (int j = 0; j < dimension; j++) {
@@ -50,7 +52,7 @@ Function output: An array representing the dot product of the 2 vectors
 */ 
 double dot_product(double *v1, double *v2, int dimension) {
     double dp = 0;
-    for (int i=0; i<dimension; ++i) {
+    for (int i = 0; i < dimension; ++i) {
         // Multiply consecutve rows
         dp += (v1[i] * v2[i]);
     }
@@ -67,7 +69,7 @@ Function output: The magnitude of that vector, as a decimal
 double find_magnitude(double* v, int dimension) {
     double mangitude = 0;
     // Sum the squares
-    for (int i=0;i<dimension;++i) {
+    for (int i = 0; i < dimension;++i) {
         mangitude += (v[i] * v[i]);
     }
     // Root the result
@@ -99,8 +101,8 @@ double* normalise(double* v, int dimension) {
         }
     } else {
         printf("Error, memory not available to allocate");
-        return NULL;  
-    }  
+        return NULL;
+    }
     return norm_v;
 }
 
@@ -123,7 +125,9 @@ void swap_vectors(double** basis_matrix, int dimension, int pos1, int pos2) {
     free(temp_vector);
 }
 
-void free_structs_mem(double ** basis_matrix, int num_vectors, char *mega_input) {
+void free_structs_mem(double **basis_matrix,
+                      int num_vectors,
+                      char *mega_input) {
     free(mega_input);
     for (int i = 0; i < num_vectors; ++i) {
         free(basis_matrix[i]);

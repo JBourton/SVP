@@ -6,7 +6,10 @@
 #include "svp_structs.h"
 #include "lll.h"
 // Pre-declare recursive function to be used later on
-void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, int working_lvl, double* shortest_vector, double* working_vector, double* shortest_length);
+void eunum_with_recursion(double** basis_matrix, int numVectors,
+                            int dimension, int working_lvl,
+                            double* shortest_vector, double* working_vector,
+                            double* shortest_length);
 
 
 /*
@@ -78,16 +81,18 @@ void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, 
     }
 
     // Explore every coeficients within the range -8 to 8
-    for (int i=-10;i<=10;++i) {
+    for (int i = -10; i <= 10; ++i) {
         // Skip the instance where the coeficient = 0
-        if (i==0) {
+        if (i == 0) {
             i += 1;
         }
         printf("[DEBUG] i is: %d\n", i);
-        // Update value at current position for working vector with the coeficient multiled by the corresponding latice value
+        // Update value at current position for working vector with 
+        // the coeficient multiled by the corresponding latice value
         working_vector[working_lvl] += i * basis_matrix[working_lvl][working_lvl];
 
-        // Here, if the current working length is >= the shortest length already, backtracking can safely ocur and the branch can be skipped
+        // Here, if the current working length is >= the shortest length already, 
+        // backtracking can safely ocur and the branch can be skipped
         double current_length = find_magnitude(working_vector, dimension);
         printf("[DEBUG] current_length is: %f\n", current_length);
         if (current_length >= *shortest_length) {
@@ -95,7 +100,9 @@ void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, 
             continue;
         }
         // Recursively explore + backtrack
-        eunum_with_recursion(basis_matrix, numVectors, dimension, working_lvl+1, shortest_vector, working_vector, shortest_length);
+        eunum_with_recursion(basis_matrix, numVectors, dimension, 
+                                working_lvl+1, shortest_vector, 
+                                working_vector, shortest_length);
         working_vector[working_lvl] -= i * basis_matrix[working_lvl][working_lvl];
     }
 }

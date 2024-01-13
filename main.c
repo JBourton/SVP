@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
 
     // Put the inividaul command line arguments into a single string
     for (int i = 1; i < argc; ++i) {
-        snprintf(temp_buffer_input, input_length * 2, "%s%s", mega_input, argv[i]);
+        snprintf(temp_buffer_input, input_length * 2,
+                "%s%s", mega_input, argv[i]);
         if (i < argc - 1) {
             snprintf(mega_input, input_length, "%s ", temp_buffer_input);
         } else {
@@ -62,7 +63,7 @@ int main(int argc, char *argv[]) {
     }
     free(temp_buffer_input);
 
-    // Megastring index keeps track of what part of the command line input to process
+    // Track what part of the command line input to process
     int megastring_index = 0;
 
     // Extract vectors within square brackets
@@ -83,12 +84,14 @@ int main(int argc, char *argv[]) {
         individual_vector[0] = '[';
         individual_vector[1] = '\0';
 
-        // Extract a substring containing everything between (and including) the next set of square brackets
-        for (size_t j = 1; j < input_length && mega_input[j] != '\0'; ++j) {     
-            // Append the next character in the masterstring to the current vector substring
+        // Extract a substring containing everything between
+        // (and including) the next set of square brackets
+        for (size_t j = 1; j < input_length &&
+                 mega_input[j] != '\0'; ++j) {
+            // Append next masterstring char to current vector substring
             strncat(individual_vector, &mega_input[megastring_index + 1], 1);
             if (mega_input[megastring_index + 1] == '[') {
-                // An opening bracket has been found before a closing one        
+                // Opening bracket found before a closing one      
                 printf("[INPUT ERROR] Misalignment of open brackets\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 return 0;
@@ -101,15 +104,12 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        
         size_t vector_len = strlen(individual_vector);
         if (vector_len > 0 && individual_vector[vector_len- 1] == ']') {
             // Add one to the index to account for the closing square bracket
             megastring_index += 1;
-            
-            // Add individual_vector to the vector structure
             // printf("\n[DEBUG] Individual_Vector: %s\n", individual_vector);
-
+            // Add individual_vector to the vector structure
             if (vector_len < 3) {
                 printf("[INPUT ERROR] Empty vectors not allowed\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
@@ -129,7 +129,8 @@ int main(int argc, char *argv[]) {
 
             // printf("[DEBUG] values substring: %s\n", values);
 
-            // Now extract each space-seperated value and attempt to convert to double to store in a vector in the basis
+            // Extract each space-seperated value and attempt to
+            // convert to double to store in a vector in the basis
             int pos = 0;
             char* value = strtok(values, " ");
             while (value != NULL) {
@@ -138,13 +139,14 @@ int main(int argc, char *argv[]) {
                     printf("[INPUT ERROR] Please input only doubles in your vectors\n");
                     return 0;
                 }
-                // [DEBUG] printf("Converted to double: %f\n", num);
 
-                // If conversion successful, place tokenised value in a basis vector
+                // If conversion successful, place in basis
                 basis_matrix[i][pos] = num;
                 pos += 1;
 
                 // Get the next token num
+                // [DEBUG] char *saveptr;
+                // [DEBUG] value = strtok_r(NULL, " ", &saveptr);
                 value = strtok(NULL, " ");
             }
             printf("\n");
@@ -160,14 +162,14 @@ int main(int argc, char *argv[]) {
             if (mega_input[megastring_index] == ' ' && mega_input[megastring_index + 1] == '[') {
                 megastring_index += 1;
             } else {
-                printf("[INPUT ERROR] Each vector must be seperated with a singular space\n");
+                printf("[INPUT ERROR] Use singular space to separate vectors\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 return 0;
             }
         } else {
             // deal with the case of [][] where i = numvectors-1
             if (mega_input[megastring_index] != '\0') {
-                printf("[INPUT ERROR] Double brackets are not allowed\n");
+                printf("[INPUT ERROR] Double brackets invalid\n");
                 return 0;
             }
         }
@@ -176,7 +178,8 @@ int main(int argc, char *argv[]) {
 
     // check exactly the right amount of vectors are created
     // If a space appears in the string, count that as one of the inputs
-    // Also need to validate instances where brackets could match count but be wrong e.g. []5[[]-]
+    // Also need to validate instances where brackets could 
+    // match count but be wrong e.g. []5[[]-]
 
     printf("Original Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
@@ -189,7 +192,7 @@ int main(int argc, char *argv[]) {
     }
     FILE *result_file = fopen("result.txt", "w");
     if (result_file != NULL) {
-        fprintf(result_file, "%f", shortest_euclidean_norm);
+        fprintf(result_file, "%f\n", shortest_euclidean_norm);
         fclose(result_file);
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be opened");

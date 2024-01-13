@@ -170,7 +170,6 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
                 rounded_proj_factor = round(size);
                 double* GS_Coefficient_Vector = multiply(
                     vectors[j], rounded_proj_factor, dimension);
-                
                 for (int i = 0; i < dimension; ++i) {
                     vectors[k][i] -= GS_Coefficient_Vector[i];
                 }
