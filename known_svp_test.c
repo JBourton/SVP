@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "known_svp_test.h"
+#include "lll.h"
+#include "svp_application.h"
+#include "svp_structs.h"
+double svp_enumaration(double** basis_matrix, int numVectors, int dimension);
 
-void test_svp_functionality(double** test_basis) {
-
-}
-
-
-// Initiate the testing proccess
-int main() {
+int test_svp_functionality() {
     // Specify a basis matrix for testing
     double** test_basis;
     // Change vector count/dimension as required
@@ -39,22 +37,25 @@ int main() {
         }
     }
 
-    // [DEBUG] Test values are properly assigned
-    for (int i = 0; i < dim; ++i) {
-        printf("[");
-        for (int j = 0; j < dim; ++j) {
-            printf("%f ", test_basis[i][j]);
-        }
-        printf("]\n");
-    }
+    // Display testing basis
+    printf("The basis used for testing is as follows:\n");
+    display_basis_matrix(test_basis, dim, dim);
+    printf("\n");
+    printf("The known shortest vector in this lattice is 1\n");
+    printf("The svp code outputs the following value:\n");
 
     // Test using specified basis
-    // test_svp_functionality(test_basis);
+    svp_enumaration(test_basis, dim, dim);
 
     // Free used structure memory
     for (int i = 0; i < dim; ++i) {
         free(test_basis[i]);
     }
     free(test_basis);
-    return 0;
+}
+
+
+// Initiate the testing proccess
+int main() {
+    return test_svp_functionality();
 }

@@ -59,7 +59,7 @@ double* minus_project(double* v1, double* v2, int dimension) {
         double projection = proj_factor * v2[i];
         project_v[i] += projection;
     }
-    return project_v; 
+    return project_v;
 }
 
 /*
@@ -100,7 +100,7 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
         }
 
         // Note: v1 is vk and v2 is ui
-        for (int i = 0; i < k; ++i) {  
+        for (int i = 0; i < k; ++i) {
             // Calculate one of the prjections
             double* row_projection = minus_project(U[k], U[i], dimension);
             // Add it to the running total
@@ -152,7 +152,7 @@ Function inputs:
 Function output: The recued basis matrix
 */
 void lll_algorithm(double** vectors, int numVectors, int dimension) {
-    // proj_factor will track of the current projection factor for use in the size condition check
+    // proj_factor tracks current projection factor for size condition check
     int rounded_proj_factor;
     double size;
     int k = 1;
@@ -162,27 +162,27 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
     Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
 
     while (k < numVectors) {
-        for (int j=k-1; j>=0; --j) {
+        for (int j = k-1; j >= 0; --j) {
             // Check size condition
             size = find_projection_fac(vectors[k], Orthog_Basis[j], dimension);
             if (size > 0.5) {
-                // Round down projection factor. Math: vk = vk - proj_factor * bj 
+                // Apply vk = vk - proj_factor * bj
                 rounded_proj_factor = round(size);
-                // [DEBUG] printf("Rounded projection factor is: %d\n", rounded_proj_factor);
-                double* GS_Coefficient_Vector = multiply(vectors[j], rounded_proj_factor, dimension);
+                double* GS_Coefficient_Vector = multiply(
+                    vectors[j], rounded_proj_factor, dimension);
                 
                 for (int i = 0; i < dimension; ++i) {
                     vectors[k][i] -= GS_Coefficient_Vector[i];
                 }
-                free(GS_Coefficient_Vector); 
+                free(GS_Coefficient_Vector);
             }
         }
-        // Increment k by 1 if lovasz condition True   
+        // Increment k by 1 if lovasz condition True
         size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, size)) {
             k += 1;
-            // Update gram schmidt 
-            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);   
+            // Update gram schmidt
+            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
         } else {
             // Swap vectors[k] with vectors[k-1]
             swap_vectors(vectors, dimension, k, k-1);

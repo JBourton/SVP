@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stddef.h>
 #include "svp_structs.h"
-#include "lll.h"
 #include "command_line.h"
 #include "svp_application.h"
 
@@ -17,8 +16,7 @@ int main(int argc, char *argv[]) {
 
     int numVectors;
     int dimension;
-    
-    // Check that there's an equal number of closing brackets compared to opening brackets
+    // Check num closing brackets = num opening brackets
     if (check_brackets_match(argc, argv) == 1) {
         // Number of bracket sets = number of vectors
         numVectors = get_bracket_count(argc, argv);
@@ -43,19 +41,26 @@ int main(int argc, char *argv[]) {
     // Assign dynamic memory to the string containing all the inputs
     size_t input_length = get_input_length(argc, argv);
     char *mega_input = (char *)malloc(input_length);
-    if (mega_input == NULL) {
+    char *temp_buffer_input = (char *)malloc(input_length * 2);
+    if (mega_input == NULL || temp_buffer_input == NULL) {
         printf("[MEMORY ALLOCATION ERROR]\n");
         free_structs_mem(basis_matrix, numVectors, mega_input);
+        free(temp_buffer_input);
         return 0;
     }
+    mega_input[0] = '\0';
+
     // Put the inividaul command line arguments into a single string
     for (int i = 1; i < argc; ++i) {
-        strcat(mega_input, argv[i]);
+        snprintf(temp_buffer_input, input_length * 2, "%s%s", mega_input, argv[i]);
         if (i < argc - 1) {
-            strcat(mega_input, " ");
+            snprintf(mega_input, input_length, "%s ", temp_buffer_input);
+        } else {
+            strncpy(mega_input, temp_buffer_input, input_length - 1);
+            mega_input[input_length - 1] = '\0';
         }
     }
-    // [DEBUG] printf("Concatenated String: %s\n", mega_input);
+    free(temp_buffer_input);
 
     // Megastring index keeps track of what part of the command line input to process
     int megastring_index = 0;
@@ -169,17 +174,11 @@ int main(int argc, char *argv[]) {
         free(individual_vector);
     }
 
-    // check exactly the right amount of vectors are create
+    // check exactly the right amount of vectors are created
     // If a space appears in the string, count that as one of the inputs
     // Also need to validate instances where brackets could match count but be wrong e.g. []5[[]-]
 
-    printf("1. Original Basis Matrix\n");
-    display_basis_matrix(basis_matrix, numVectors, dimension);
-    printf("\n");
-
-    // Apply the lll algorithm to the basis
-    lll_algorithm(basis_matrix, numVectors, dimension);
-    printf("\n2. Final basis matrix after lll reduction:\n");
+    printf("Original Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 

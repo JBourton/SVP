@@ -18,6 +18,12 @@ Function inputs:
 Function output: A numeric solution to the shortest vector problem
 */
 double svp_enumaration(double** basis_matrix, int numVectors, int dimension) {
+    // First, the lll algorithm is applied to the basis
+    lll_algorithm(basis_matrix, numVectors, dimension);
+    printf("\nBasis matrix after lll reduction:\n");
+    display_basis_matrix(basis_matrix, numVectors, dimension);
+    printf("\n");
+
     double* shortest_vector = malloc(dimension * sizeof(double));
     double shortest_length = find_magnitude(basis_matrix[0], dimension);
     double* working_vector = malloc(dimension * sizeof(double));

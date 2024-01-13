@@ -18,7 +18,7 @@ int check_brackets_match(int argc, char *argv[]) {
     int closing_brackets = 0;
 
     // Check number of opening and closing brackets match
-    for (int i=1; i<argc; i++) {
+    for (int i = 1; i < argc; i++) {
         if (strncmp(argv[i], "[", 1) == 0) {
             open_brackets += 1;
         }
