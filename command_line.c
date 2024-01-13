@@ -19,7 +19,7 @@ int check_brackets_match(int argc, char *argv[]) {
 
     // Check number of opening and closing brackets match
     for (int i=1; i<argc; i++) {
-        if (strncmp(argv[i],"[", 1) == 0) {
+        if (strncmp(argv[i], "[", 1) == 0) {
             open_brackets += 1;
         }
         size_t input_item = strlen(argv[i]);
@@ -28,7 +28,8 @@ int check_brackets_match(int argc, char *argv[]) {
         }
     }
     if (open_brackets != closing_brackets) {
-        printf("[INPUT ERROR] Number of openinig and closing brackets do not match\n");
+        printf("[INPUT ERROR] Number of opening and closing brackets do not "
+       "match\n");
         return 0;
     } else {
         return 1;
@@ -44,8 +45,8 @@ Function output: A integer representing the count of opening brackets
 */
 int get_bracket_count(int argc, char *argv[]) {
     int bracket_count = 0;
-    for (int i=1; i<argc; i++) {
-        if (strncmp(argv[i],"[", 1) == 0) {
+    for (int i = 1; i < argc; i++) {
+        if (strncmp(argv[i], "[", 1) == 0) {
             bracket_count += 1;
         }
     }
@@ -63,7 +64,7 @@ size_t get_input_length(int argc, char *argv[]) {
     // Make 1 big string from all the command line arguments
     size_t input_length = 0;
 
-    for (int i=1; i<argc; i++) {
+    for (int i = 1; i < argc; i++) {
         size_t input_item = strlen(argv[i]);
         input_length += input_item + 1;
     }
