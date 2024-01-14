@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 #include "svp_structs.h"
+#include "lll.h"
 #include "command_line.h"
 #include "svp_application.h"
 
@@ -136,7 +137,8 @@ int main(int argc, char *argv[]) {
             while (value != NULL) {
                 double num = strtod(value, NULL);
                 if (num == 0 && value[0] != '0') {
-                    printf("[INPUT ERROR] Please input only doubles in your vectors\n");
+                    printf("[INPUT ERROR] "
+                        "Please input only doubles in your vectors\n");
                     return 0;
                 }
 
@@ -158,7 +160,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Progress pointer to next vector
-        if(i < numVectors-1) {
+        if(i < numVectors - 1) {
             if (mega_input[megastring_index] == ' ' && mega_input[megastring_index + 1] == '[') {
                 megastring_index += 1;
             } else {
@@ -181,12 +183,18 @@ int main(int argc, char *argv[]) {
     // Also need to validate instances where brackets could 
     // match count but be wrong e.g. []5[[]-]
 
-    printf("Original Basis Matrix\n");
+    printf("1. Original Basis Matrix\n");
+    display_basis_matrix(basis_matrix, numVectors, dimension);
+    printf("\n");
+
+    lll_algorithm(basis_matrix, numVectors, dimension);
+
+    printf("2. LLL-Reduced Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
     // Finally, the result of enumaratin on the reduced basis is then written to a text file
-    double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
+    /* double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
     if (shortest_euclidean_norm == 0) {
         return 0;
     }
@@ -195,8 +203,10 @@ int main(int argc, char *argv[]) {
         fprintf(result_file, "%f\n", shortest_euclidean_norm);
         fclose(result_file);
     } else {
-        printf("[FILE ERROR]: 'result.txt' could not be opened");
-    }
+        printf("[FILE ERROR]: 'result.txt' could not be created");
+    } */
+
+    // Call the LLL algorithm on wikipedia
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);

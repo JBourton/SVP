@@ -105,6 +105,8 @@ double** gram_schdmit(double** vectors, int numVectors, int dimension) {
             double* row_projection = minus_project(U[k], U[i], dimension);
             // Add it to the running total
             for (int j = 0; j < dimension; ++j) {
+                printf("[DEBUG] total_projection[j]: %f\n", total_projection[j]);
+                printf("[DEBUG] row_projection[j]: %f\n", row_projection[j]);
                 total_projection[j] += row_projection[j];
             }
             free(row_projection);
@@ -160,33 +162,67 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
     // Apply Gram Schmidt proccess
     double** Orthog_Basis;
     Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+    printf("\n[DEBUG] 2. Gram Shcmidt after first Gram Shcmidt application\n");
+    display_basis_matrix(Orthog_Basis, numVectors, dimension);
+    printf("\n");
 
     while (k < numVectors) {
+        printf("\n---------------------------\n");
+        printf("k is: %d\n", k);
+        printf("---------------------------\n\n");
         for (int j = k-1; j >= 0; --j) {
             // Check size condition
             size = find_projection_fac(vectors[k], Orthog_Basis[j], dimension);
+            printf("[DEBUG] Projection factor (size) is: %f\n", size);
             if (size > 0.5) {
+                printf("\n[DEBUG] Failed size check condition\n");
                 // Apply vk = vk - proj_factor * bj
                 rounded_proj_factor = round(size);
+                printf("[DEBUG] Rounded projection factor is: %d\n", rounded_proj_factor);
                 double* GS_Coefficient_Vector = multiply(
                     vectors[j], rounded_proj_factor, dimension);
                 for (int i = 0; i < dimension; ++i) {
                     vectors[k][i] -= GS_Coefficient_Vector[i];
                 }
                 free(GS_Coefficient_Vector);
+
+                printf("\n[DEBUG] Updated Basis after projection subtraction\n");
+                display_basis_matrix(vectors, numVectors, dimension);
+                printf("\n");
+
+                // Update Gram-Schmidt here also
+                printf("[DEBUG] Gram Schdmit matrix after updated Basis calculation:\n");
+                // NOTE: KEEP THIS LINE IN WHEN REMOVING COMMENTS
+                Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+                display_basis_matrix(Orthog_Basis, numVectors, dimension);
+                printf("\n");
+            } else {
+                printf("[DEBUG] Passed size check condition\n");
             }
         }
         // Increment k by 1 if lovasz condition True
         size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
         if (lovasz_check(Orthog_Basis[k], Orthog_Basis[k-1], dimension, size)) {
+            printf("\n[DEBUG] Passed lovasz check, increment k\n");
             k += 1;
             // Update gram schmidt
-            Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+            // Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+            // printf("\n[DEBUG] Recomputed Gram Shdmidt basis after projection subtraction\n\n");
+            // display_basis_matrix(Orthog_Basis, numVectors, dimension);
+            // printf("\n"); 
         } else {
             // Swap vectors[k] with vectors[k-1]
+            printf("\n[DEBUG] Failed lovasz check, swap vectors k & k-1 & update GS\n\n");
             swap_vectors(vectors, dimension, k, k-1);
+            printf("[DEBUG] Basis matrix after swap performed:\n");
+            display_basis_matrix(vectors, numVectors, dimension);
+            printf("\n");
             // Update Gram Schmidt
+            printf("[DEBUG] Gram Schdmit matrix after updated Basis calculation:\n");
+            // NOTE: KEEP THIS LINE IN WHEN REMOVING COMMENTS
             Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
+            display_basis_matrix(Orthog_Basis, numVectors, dimension);
+            printf("\n");
             // Set k = to the maxo f k-1 and 1
             k = fmax(k - 1, 1);
         }
