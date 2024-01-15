@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
+#include <time.h>
 #include "svp_structs.h"
 #include "lll.h"
 #include "command_line.h"
@@ -9,6 +10,10 @@
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
+    // [DEBUG] Clock code
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
     // Take vector inputs for the basis from the command line
     if (argc < 2) {
         printf("Input the basis in the form: %s [v1] [v2] ... [vn]\n", argv[0]);
@@ -211,6 +216,10 @@ int main(int argc, char *argv[]) {
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be created");
     }
+
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("CPU time used: %f seconds\n", cpu_time_used);
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);

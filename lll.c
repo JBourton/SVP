@@ -196,12 +196,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
                 display_basis_matrix(vectors, numVectors, dimension);
                 printf("\n");
 
-                /* // Update Gram-Schmidt
-                printf("[DEBUG] Gram Schdmit matrix after updated Basis calculation:\n");
-                // NOTE: KEEP THIS LINE IN WHEN REMOVING COMMENTS
                 Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
-                display_basis_matrix(Orthog_Basis, numVectors, dimension);
-                printf("\n");    */   
             } else {
                 printf("[DEBUG] Passed size check condition\n");
             }
@@ -227,7 +222,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
             // Update Gram Schmidt
             printf("[DEBUG] Gram Schdmit matrix after"\
                     "updated Basis calculation:\n");
-            // NOTE: KEEP THIS LINE IN WHEN REMOVING COMMENTS
+            // [DEBUG] KEEP THIS LINE IN WHEN REMOVING COMMENTS
             Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
             display_basis_matrix(Orthog_Basis, numVectors, dimension);
             printf("\n");
