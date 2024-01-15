@@ -188,26 +188,26 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     lll_algorithm(basis_matrix, numVectors, dimension);
+    double shortest_euclidean_norm = find_shortest_v(basis_matrix, numVectors, dimension);
+    printf("Shortest Euclidean Norm in the basis is: %f\n", shortest_euclidean_norm);
 
     printf("2. LLL-Reduced Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
     // Finally, the result of enumaratin on the reduced basis is then written to a text file
-    /* double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
+    // double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
     if (shortest_euclidean_norm == 0) {
         return 0;
     }
-    FILE *result_file = fopen("result.txt", "w");
+    FILE *result_file = fopen("./result.txt", "w");
     if (result_file != NULL) {
         fprintf(result_file, "%f\n", shortest_euclidean_norm);
         fclose(result_file);
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be created");
-    } */
-
-    // Call the LLL algorithm on wikipedia
-
+    }
+ 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);
     return 0;
