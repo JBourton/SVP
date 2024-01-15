@@ -69,7 +69,7 @@ Function output: The magnitude of that vector, as a decimal
 double find_magnitude(double* v, int dimension) {
     double mangitude = 0;
     // Sum the squares
-    for (int i = 0; i < dimension;++i) {
+    for (int i = 0; i < dimension; ++i) {
         mangitude += (v[i] * v[i]);
     }
     // Root the result

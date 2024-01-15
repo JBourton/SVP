@@ -26,6 +26,7 @@ $(EXECUTABLE): $(SOURCES) $(HEADERS)
 # Remove runme file
 clean:
 	rm -f $(EXECUTABLE)
+	rm -f $(TEST_EXECUTABLE)
 
 # Test the program
 test: $(TEST_EXECUTABLE)
