@@ -128,15 +128,11 @@ int main(int argc, char *argv[]) {
             strncpy(values, individual_vector + 1, vector_len - 2);
             values[vector_len - 2] = '\0';
 
-            printf("[DEBUG] values substring: %s\n", values);
-
             // Extract each space-seperated value and attempt to
             // convert to double to store in a vector in the basis
             int pos = 0;
             double num;
             while (sscanf(values, "%lf", &num) == 1) {
-                printf("[DEBUG] i is: %d\n", i);
-                printf("[DEBUG] num is: %f\n", num);
                 basis_matrix[i][pos] = num;
                 pos += 1;
 
@@ -152,7 +148,7 @@ int main(int argc, char *argv[]) {
 
             // Ensure the correct amount of vectors has been extracted
             if (pos != numVectors) {
-                printf("[INPUT ERROR] Input n valid elements");
+                printf("[INPUT ERROR] Input n valid elements\n");
                 return 0;
             }
         } else {

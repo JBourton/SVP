@@ -13,8 +13,8 @@ HEADERS = svp_structs.h lll.h command_line.h svp_application.h
 TEST_HEADERS = svp_structs.h lll.h svp_application.h
 
 # Set executable name
-EXECUTABLE = ./runme
-TEST_EXECUTABLE = ./testme
+EXECUTABLE = runme
+TEST_EXECUTABLE = testme
 
 # Set default target - when `make` is ran, all commands associated with the 'all' target will be executed
 all: $(EXECUTABLE)

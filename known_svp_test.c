@@ -4,7 +4,7 @@
 #include "lll.h"
 #include "svp_application.h"
 #include "svp_structs.h"
-double svp_enumaration(double** basis_matrix, int numVectors, int dimension);
+double find_shortest_v(double** basis_matrix, int numVectors, int dimension);
 
 int test_svp_functionality() {
     // Specify a basis matrix for testing
@@ -45,13 +45,24 @@ int test_svp_functionality() {
     printf("The svp code outputs the following value:\n");
 
     // Test using specified basis
-    svp_enumaration(test_basis, dim, dim);
+    lll_algorithm(test_basis, dim, dim);
+    printf("\n");
+    printf("The LLL-Reduced basis is:\n");
+    display_basis_matrix(test_basis, dim, dim);
+    printf("\n");
+
+    // Calculate shortest euclidean norm
+    double shortest_euclidean_norm = find_shortest_v(test_basis, \
+        dim, dim);
+    printf("Shortest Euclidean Norm in the basis " \
+            "is: %f\n", shortest_euclidean_norm);
 
     // Free used structure memory
     for (int i = 0; i < dim; ++i) {
         free(test_basis[i]);
     }
     free(test_basis);
+    return 0;
 }
 
 
