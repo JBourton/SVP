@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
             // Append next masterstring char to current vector substring
             strncat(individual_vector, &mega_input[megastring_index + 1], 1);
             if (mega_input[megastring_index + 1] == '[') {
-                // Opening bracket found before a closing one      
+                // Opening bracket found before a closing one
                 printf("[INPUT ERROR] Misalignment of open brackets\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 return 0;
@@ -128,31 +128,33 @@ int main(int argc, char *argv[]) {
             strncpy(values, individual_vector + 1, vector_len - 2);
             values[vector_len - 2] = '\0';
 
-            // printf("[DEBUG] values substring: %s\n", values);
+            printf("[DEBUG] values substring: %s\n", values);
 
             // Extract each space-seperated value and attempt to
             // convert to double to store in a vector in the basis
             int pos = 0;
-            char* value = strtok(values, " ");
-            while (value != NULL) {
-                double num = strtod(value, NULL);
-                if (num == 0 && value[0] != '0') {
-                    printf("[INPUT ERROR] "
-                        "Please input only doubles in your vectors\n");
-                    return 0;
-                }
-
-                // If conversion successful, place in basis
+            double num;
+            while (sscanf(values, "%lf", &num) == 1) {
+                printf("[DEBUG] i is: %d\n", i);
+                printf("[DEBUG] num is: %f\n", num);
                 basis_matrix[i][pos] = num;
                 pos += 1;
 
-                // Get the next token num
-                // [DEBUG] char *saveptr;
-                // [DEBUG] value = strtok_r(NULL, " ", &saveptr);
-                value = strtok(NULL, " ");
-            }
-            printf("\n");
+                values++;
+                while (*values && *values != ' ' && *values != ']') {
+                    values++;
+                }
 
+                if (*values == ']') {
+                    break;
+                }
+            }
+
+            // Ensure the correct amount of vectors has been extracted
+            if (pos != numVectors) {
+                printf("[INPUT ERROR] Input n valid elements");
+                return 0;
+            }
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
@@ -160,11 +162,13 @@ int main(int argc, char *argv[]) {
         }
 
         // Progress pointer to next vector
-        if(i < numVectors - 1) {
-            if (mega_input[megastring_index] == ' ' && mega_input[megastring_index + 1] == '[') {
+        if (i < numVectors - 1) {
+            if (mega_input[megastring_index] == ' ' && \
+                mega_input[megastring_index + 1] == '[') {
                 megastring_index += 1;
             } else {
-                printf("[INPUT ERROR] Use singular space to separate vectors\n");
+                printf("[INPUT ERROR] Use singular space "\
+                        "to separate vectors\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 return 0;
             }
@@ -180,7 +184,7 @@ int main(int argc, char *argv[]) {
 
     // check exactly the right amount of vectors are created
     // If a space appears in the string, count that as one of the inputs
-    // Also need to validate instances where brackets could 
+    // Also need to validate instances where brackets could
     // match count but be wrong e.g. []5[[]-]
 
     printf("1. Original Basis Matrix\n");
@@ -188,25 +192,29 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     lll_algorithm(basis_matrix, numVectors, dimension);
+    double shortest_euclidean_norm = find_shortest_v(basis_matrix, \
+        numVectors, dimension);
+    printf("Shortest Euclidean Norm in the basis " \
+            "is: %f\n", shortest_euclidean_norm);
 
     printf("2. LLL-Reduced Basis Matrix\n");
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
-    // Finally, the result of enumaratin on the reduced basis is then written to a text file
-    /* double shortest_euclidean_norm = svp_enumaration(basis_matrix, numVectors, dimension);
+    // Finally, the result of enumaratin on the reduced
+    // basis is then written to a text file
+    // double shortest_euclidean_norm =
+    // svp_enumaration(basis_matrix, numVectors, dimension);
     if (shortest_euclidean_norm == 0) {
         return 0;
     }
-    FILE *result_file = fopen("result.txt", "w");
+    FILE *result_file = fopen("./result.txt", "w");
     if (result_file != NULL) {
         fprintf(result_file, "%f\n", shortest_euclidean_norm);
         fclose(result_file);
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be created");
-    } */
-
-    // Call the LLL algorithm on wikipedia
+    }
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);

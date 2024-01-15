@@ -37,13 +37,15 @@ double svp_enumaration(double** basis_matrix, int numVectors, int dimension) {
     printf("[DEBUG] in svp_enum, shortest_length is: %f\n\n", shortest_length);
 
     // Kickstart the recursive enumaration of shortest vector caluclation
-    eunum_with_recursion(basis_matrix, numVectors, dimension,
-                            0, shortest_vector, working_vector, &shortest_length);
+    eunum_with_recursion(basis_matrix, numVectors, dimension, \
+        0, shortest_vector, working_vector, \
+        &shortest_length);
     // Free the memory used by the vectors
     free(working_vector);
     free(shortest_vector);
 
-    printf("[DEBUG] Reached the end of svp_enumaration and shortest_length is: %f\n", shortest_length);
+    printf("[DEBUG] Reached the end of svp_enumaration " \
+            "and shortest_length is: %f\n", shortest_length);
 
     return shortest_length;
 }
@@ -56,9 +58,12 @@ Function inputs:
 - dimension: The dimension of each vector
 Function output: A solution to the shortest vector problem
 */
-void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, int working_lvl, double* shortest_vector, double* working_vector, double* shortest_length) {
+void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension,
+    int working_lvl, double* shortest_vector,
+    double* working_vector, double* shortest_length) {
     printf("\n[DEBUG] Working level: %d\n", working_lvl);
-    // If the chain has the conditoin recursion level = dimension (i.e. everyting all 3 dimensions have been explored), begin return
+    // Return if chain has conditoin recursion level = dimension
+    // (i.e. everyting all 'n' dimensions have been explored)
     if (working_lvl == dimension) {
         // Test the final vector for size
         double final_length = find_magnitude(working_vector, dimension);
@@ -92,7 +97,7 @@ void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, 
         working_vector[working_lvl] +=
             i * basis_matrix[working_lvl][working_lvl];
 
-        // Here, if the current working length is >= the shortest length already, 
+        // If current working length is >= shortest length,
         // backtracking can safely ocur and the branch can be skipped
         double current_length = find_magnitude(working_vector, dimension);
         printf("[DEBUG] current_length is: %f\n", current_length);
@@ -108,4 +113,24 @@ void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, 
         working_vector[working_lvl] -=
             i * basis_matrix[working_lvl][working_lvl];
     }
+}
+
+/*
+Function purpose: To find the shortest basis vector
+Function inputs:
+- basis_matrix: The (lll-reduced) basis matrix
+- numVectors: The number of vectors in the basis matrix
+- dimension: The dimension of each vector
+Function output: A numeric value for shortest distance
+*/
+double find_shortest_v(double** basis_matrix, int numVectors, int dimension) {
+    // Find the magnitude of the first basis vector as a baseline
+    double shortest_dist = find_magnitude(basis_matrix[0], dimension);
+    for (int i = 1; i < numVectors; ++i) {
+        double current_length = find_magnitude(basis_matrix[i], dimension);
+        if (current_length < shortest_dist) {
+            shortest_dist = current_length;
+        }
+    }
+    return shortest_dist;
 }
