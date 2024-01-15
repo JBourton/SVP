@@ -58,11 +58,11 @@ Function inputs:
 - dimension: The dimension of each vector
 Function output: A solution to the shortest vector problem
 */
-void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension, 
-    int working_lvl, double* shortest_vector, 
+void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension,
+    int working_lvl, double* shortest_vector,
     double* working_vector, double* shortest_length) {
     printf("\n[DEBUG] Working level: %d\n", working_lvl);
-    // Return if chain has conditoin recursion level = dimension 
+    // Return if chain has conditoin recursion level = dimension
     // (i.e. everyting all 'n' dimensions have been explored)
     if (working_lvl == dimension) {
         // Test the final vector for size

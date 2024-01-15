@@ -70,7 +70,7 @@ Function inputs:
 - The dimension of those vectors 'dimension'
 Function output: A 2d array 'U' representing the orthogonal basis of the orginal basis matrix
 */
-double** gram_schdmit(double** vectors, int numVectors, int dimension) { 
+double** gram_schdmit(double** vectors, int numVectors, int dimension) {
     // Dynamically declare 2d array holding copy of basis matrix
     double** U = (double**)malloc(numVectors * sizeof(double*));
     for (int i = 0; i < numVectors; ++i) {

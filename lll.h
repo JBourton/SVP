@@ -8,5 +8,4 @@ double* minus_project(double* v1, double* v2, int dimension);
 int lovasz_check(double* v1, double* v2, int dimension, double gs_coefficient);
 double find_projection_fac(double* v1, double* v2, int dimension);
 void lll_algorithm(double** vectors, int numVectors, int dimension);
-void lll_algorithm_2(double** vectors, int numVectors, int dimension);
 #endif

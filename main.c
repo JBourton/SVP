@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
             // Append next masterstring char to current vector substring
             strncat(individual_vector, &mega_input[megastring_index + 1], 1);
             if (mega_input[megastring_index + 1] == '[') {
-                // Opening bracket found before a closing one 
+                // Opening bracket found before a closing one
                 printf("[INPUT ERROR] Misalignment of open brackets\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 return 0;
@@ -128,33 +128,33 @@ int main(int argc, char *argv[]) {
             strncpy(values, individual_vector + 1, vector_len - 2);
             values[vector_len - 2] = '\0';
 
-            // printf("[DEBUG] values substring: %s\n", values);
+            printf("[DEBUG] values substring: %s\n", values);
 
             // Extract each space-seperated value and attempt to
             // convert to double to store in a vector in the basis
             int pos = 0;
-            char* saveptr;
-            char* value = strtok_r(values, " ", &saveptr);
-            // char* value = strtok(values, " ");
-            while (value != NULL) {
-                double num = strtod(value, NULL);
-                if (num == 0 && value[0] != '0') {
-                    printf("[INPUT ERROR] "
-                        "Please input only doubles in your vectors\n");
-                    return 0;
-                }
-
-                // If conversion successful, place in basis
+            double num;
+            while (sscanf(values, "%lf", &num) == 1) {
+                printf("[DEBUG] i is: %d\n", i);
+                printf("[DEBUG] num is: %f\n", num);
                 basis_matrix[i][pos] = num;
                 pos += 1;
 
-                // Get the next token num
-                // [DEBUG] char *saveptr;
-                // [DEBUG] value = strtok_r(NULL, " ", &saveptr);
-                value = strtok(NULL, " ");
-            }
-            printf("\n");
+                values++;
+                while (*values && *values != ' ' && *values != ']') {
+                    values++;
+                }
 
+                if (*values == ']') {
+                    break;
+                }
+            }
+
+            // Ensure the correct amount of vectors has been extracted
+            if (pos != numVectors) {
+                printf("[INPUT ERROR] Input n valid elements");
+                return 0;
+            }
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
     display_basis_matrix(basis_matrix, numVectors, dimension);
     printf("\n");
 
-    // Finally, the result of enumaratin on the reduced 
+    // Finally, the result of enumaratin on the reduced
     // basis is then written to a text file
     // double shortest_euclidean_norm =
     // svp_enumaration(basis_matrix, numVectors, dimension);
