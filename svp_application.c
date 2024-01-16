@@ -115,22 +115,4 @@ void eunum_with_recursion(double** basis_matrix, int numVectors, int dimension,
     }
 }
 
-/*
-Function purpose: To find the shortest basis vector
-Function inputs:
-- basis_matrix: The (lll-reduced) basis matrix
-- numVectors: The number of vectors in the basis matrix
-- dimension: The dimension of each vector
-Function output: A numeric value for shortest distance
-*/
-double find_shortest_v(double** basis_matrix, int numVectors, int dimension) {
-    // Find the magnitude of the first basis vector as a baseline
-    double shortest_dist = find_magnitude(basis_matrix[0], dimension);
-    for (int i = 1; i < numVectors; ++i) {
-        double current_length = find_magnitude(basis_matrix[i], dimension);
-        if (current_length < shortest_dist) {
-            shortest_dist = current_length;
-        }
-    }
-    return shortest_dist;
-}
+

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include <time.h>
+#include <sys/time.h>
 #include "svp_structs.h"
 #include "lll.h"
 #include "command_line.h"
@@ -11,9 +11,10 @@
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
     // [DEBUG] Clock code
-    clock_t start, end;
-    double cpu_time_used;
-    start = clock();
+    struct timeval start, end;
+    long seconds, microseconds;
+    gettimeofday(&start, NULL);
+
     // Take vector inputs for the basis from the command line
     if (argc < 2) {
         printf("Input the basis in the form: %s [v1] [v2] ... [vn]\n", argv[0]);
@@ -137,6 +138,7 @@ int main(int argc, char *argv[]) {
             // convert to double to store in a vector in the basis
             int pos = 0;
             double num;
+            char* original_values = values;
             while (sscanf(values, "%lf", &num) == 1) {
                 basis_matrix[i][pos] = num;
                 pos += 1;
@@ -150,7 +152,7 @@ int main(int argc, char *argv[]) {
                     break;
                 }
             }
-
+            free(original_values);
             // Ensure the correct amount of vectors has been extracted
             if (pos != numVectors) {
                 printf("[INPUT ERROR] Input n valid elements\n");
@@ -183,29 +185,12 @@ int main(int argc, char *argv[]) {
         free(individual_vector);
     }
 
-    // check exactly the right amount of vectors are created
-    // If a space appears in the string, count that as one of the inputs
-    // Also need to validate instances where brackets could
-    // match count but be wrong e.g. []5[[]-]
-
-    printf("1. Original Basis Matrix\n");
-    display_basis_matrix(basis_matrix, numVectors, dimension);
-    printf("\n");
-
     lll_algorithm(basis_matrix, numVectors, dimension);
     double shortest_euclidean_norm = find_shortest_v(basis_matrix, \
         numVectors, dimension);
-    printf("Shortest Euclidean Norm in the basis " \
-            "is: %f\n", shortest_euclidean_norm);
-
-    printf("2. LLL-Reduced Basis Matrix\n");
-    display_basis_matrix(basis_matrix, numVectors, dimension);
-    printf("\n");
 
     // Finally, the result of enumaratin on the reduced
     // basis is then written to a text file
-    // double shortest_euclidean_norm =
-    // svp_enumaration(basis_matrix, numVectors, dimension);
     if (shortest_euclidean_norm == 0) {
         return 0;
     }
@@ -217,9 +202,11 @@ int main(int argc, char *argv[]) {
         printf("[FILE ERROR]: 'result.txt' could not be created");
     }
 
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("CPU time used: %f seconds\n", cpu_time_used);
+    gettimeofday(&end, NULL);
+    seconds = end.tv_sec - start.tv_sec;
+    microseconds = end.tv_usec - start.tv_usec;
+    double elapsed = seconds + microseconds * 1e-6;
+    printf("Elapsed time: %f seconds\n", elapsed);
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);
