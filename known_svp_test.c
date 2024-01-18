@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "known_svp_test.h"
 #include "lll.h"
-#include "svp_application.h"
 #include "svp_structs.h"
 double find_shortest_v(double** basis_matrix, int numVectors, int dimension);
 

@@ -5,12 +5,12 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 
 # State source files
-SOURCES = main.c svp_structs.c lll.c command_line.c svp_application.c
+SOURCES = main.c svp_structs.c lll.c command_line.c
 TEST_SOURCE = known_svp_test.c
-TEST_EXTRA_SOURCES = svp_structs.c lll.c svp_application.c
+TEST_EXTRA_SOURCES = svp_structs.c lll.c
 
-HEADERS = svp_structs.h lll.h command_line.h svp_application.h
-TEST_HEADERS = svp_structs.h lll.h svp_application.h
+HEADERS = svp_structs.h lll.h command_line.h
+TEST_HEADERS = svp_structs.h lll.h
 
 # Set executable name
 EXECUTABLE = runme

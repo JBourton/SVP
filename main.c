@@ -6,7 +6,6 @@
 #include "svp_structs.h"
 #include "lll.h"
 #include "command_line.h"
-#include "svp_application.h"
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
@@ -82,7 +81,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Initialisie an empty substring to hold the curent vector
-        char *individual_vector = (char *)malloc(input_length);
+        char *individual_vector = (char *)malloc(input_length + 1);
         if (individual_vector == NULL) {
             printf("[MEMORY ALLOCATION ERROR]\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
@@ -115,7 +114,6 @@ int main(int argc, char *argv[]) {
         if (vector_len > 0 && individual_vector[vector_len- 1] == ']') {
             // Add one to the index to account for the closing square bracket
             megastring_index += 1;
-            // printf("\n[DEBUG] Individual_Vector: %s\n", individual_vector);
             // Add individual_vector to the vector structure
             if (vector_len < 3) {
                 printf("[INPUT ERROR] Empty vectors not allowed\n");
@@ -128,10 +126,12 @@ int main(int argc, char *argv[]) {
             if (values == NULL) {
                 printf("[MEMORY ALLOCATION ERROR]\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
+                free(values);
                 return 0;
             }
 
             strncpy(values, individual_vector + 1, vector_len - 2);
+            free(individual_vector);
             values[vector_len - 2] = '\0';
 
             // Extract each space-seperated value and attempt to
@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
+            free(individual_vector);
             return 0;
         }
 
@@ -182,7 +183,6 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
         }
-        free(individual_vector);
     }
 
     lll_algorithm(basis_matrix, numVectors, dimension);
