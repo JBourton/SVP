@@ -175,13 +175,13 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
 
                 free(GS_Coefficient_Vector);
                 // Update Gram-Shmit again
-                // Free memory used up by orthogonol basis matrix and the vectors within
+                // Free memory used by orthogonol basis
                 for (int i = 0; i < numVectors; ++i) {
                     free(Orthog_Basis[i]);
                 }
                 free(Orthog_Basis);
                 Orthog_Basis = gram_schdmit(vectors, numVectors, dimension);
-            }       
+            }
         }
         // Increment k by 1 if lovasz condition True
         size = find_projection_fac(vectors[k], Orthog_Basis[k-1], dimension);
@@ -194,7 +194,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
             swap_vectors(vectors, dimension, k, k-1);
 
             // Update Gram Schmidt
-            // Free memory used up by orthogonol basis matrix and the vectors within
+            // Free memory used up by orthogonol basis
             for (int i = 0; i < numVectors; ++i) {
                 free(Orthog_Basis[i]);
             }
@@ -206,7 +206,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
             }
     }
 
-    // Free memory used up by orthogonol basis matrix and the vectors within
+    // Free memory used up by orthogonol basis
     for (int i = 0; i < numVectors; ++i) {
         free(Orthog_Basis[i]);
     }

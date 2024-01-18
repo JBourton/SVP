@@ -9,11 +9,6 @@
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
-    // [DEBUG] Clock code
-    struct timeval start, end;
-    long seconds, microseconds;
-    gettimeofday(&start, NULL);
-
     // Take vector inputs for the basis from the command line
     if (argc < 2) {
         printf("Input the basis in the form: %s [v1] [v2] ... [vn]\n", argv[0]);
@@ -201,12 +196,6 @@ int main(int argc, char *argv[]) {
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be created");
     }
-
-    gettimeofday(&end, NULL);
-    seconds = end.tv_sec - start.tv_sec;
-    microseconds = end.tv_usec - start.tv_usec;
-    double elapsed = seconds + microseconds * 1e-6;
-    printf("Elapsed time: %f seconds\n", elapsed);
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);
