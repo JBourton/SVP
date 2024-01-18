@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Assign dynamic memory to the string containing all the inputs
+    // Assign dynamic memory to the string containing all inputs
     size_t input_length = get_input_length(argc, argv);
     char *mega_input = (char *)malloc(input_length);
     char *temp_buffer_input = (char *)malloc(input_length * 2);
@@ -180,6 +180,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Command line input proccessed
+    // Now commence SVP solution
     lll_algorithm(basis_matrix, numVectors, dimension);
     double shortest_euclidean_norm = find_shortest_v(basis_matrix, \
         numVectors, dimension);

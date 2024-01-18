@@ -1,3 +1,9 @@
+/* 
+The purpose of this file is abstract away some of
+the complexities of validating command line inputs,
+thereby simplifying interpretation of main.c
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,21 +70,10 @@ size_t get_input_length(int argc, char *argv[]) {
     // Make 1 big string from all the command line arguments
     size_t input_length = 0;
 
+    // Apend each item to the big string
     for (int i = 1; i < argc; i++) {
         size_t input_item = strlen(argv[i]);
         input_length += input_item + 1;
     }
     return input_length;
 }
-
-/*
-Function purpose:
-Function inputs:
-Function output:
-*/
-
-/*
-Function purpose:
-Function inputs:
-Function output:
-*/
