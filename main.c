@@ -2,18 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include <time.h>
+#include <sys/time.h>
 #include "svp_structs.h"
 #include "lll.h"
 #include "command_line.h"
-#include "svp_application.h"
 
 // Main should be able to receive an arbitary number of input vectors
 int main(int argc, char *argv[]) {
-    // [DEBUG] Clock code
-    clock_t start, end;
-    double cpu_time_used;
-    start = clock();
     // Take vector inputs for the basis from the command line
     if (argc < 2) {
         printf("Input the basis in the form: %s [v1] [v2] ... [vn]\n", argv[0]);
@@ -81,7 +76,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Initialisie an empty substring to hold the curent vector
-        char *individual_vector = (char *)malloc(input_length);
+        char *individual_vector = (char *)malloc(input_length + 1);
         if (individual_vector == NULL) {
             printf("[MEMORY ALLOCATION ERROR]\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
@@ -114,7 +109,6 @@ int main(int argc, char *argv[]) {
         if (vector_len > 0 && individual_vector[vector_len- 1] == ']') {
             // Add one to the index to account for the closing square bracket
             megastring_index += 1;
-            // printf("\n[DEBUG] Individual_Vector: %s\n", individual_vector);
             // Add individual_vector to the vector structure
             if (vector_len < 3) {
                 printf("[INPUT ERROR] Empty vectors not allowed\n");
@@ -127,16 +121,19 @@ int main(int argc, char *argv[]) {
             if (values == NULL) {
                 printf("[MEMORY ALLOCATION ERROR]\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
+                free(values);
                 return 0;
             }
 
             strncpy(values, individual_vector + 1, vector_len - 2);
+            free(individual_vector);
             values[vector_len - 2] = '\0';
 
             // Extract each space-seperated value and attempt to
             // convert to double to store in a vector in the basis
             int pos = 0;
             double num;
+            char* original_values = values;
             while (sscanf(values, "%lf", &num) == 1) {
                 basis_matrix[i][pos] = num;
                 pos += 1;
@@ -150,7 +147,7 @@ int main(int argc, char *argv[]) {
                     break;
                 }
             }
-
+            free(original_values);
             // Ensure the correct amount of vectors has been extracted
             if (pos != numVectors) {
                 printf("[INPUT ERROR] Input n valid elements\n");
@@ -159,6 +156,7 @@ int main(int argc, char *argv[]) {
         } else {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
+            free(individual_vector);
             return 0;
         }
 
@@ -180,32 +178,14 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
         }
-        free(individual_vector);
     }
-
-    // check exactly the right amount of vectors are created
-    // If a space appears in the string, count that as one of the inputs
-    // Also need to validate instances where brackets could
-    // match count but be wrong e.g. []5[[]-]
-
-    printf("1. Original Basis Matrix\n");
-    display_basis_matrix(basis_matrix, numVectors, dimension);
-    printf("\n");
 
     lll_algorithm(basis_matrix, numVectors, dimension);
     double shortest_euclidean_norm = find_shortest_v(basis_matrix, \
         numVectors, dimension);
-    printf("Shortest Euclidean Norm in the basis " \
-            "is: %f\n", shortest_euclidean_norm);
-
-    printf("2. LLL-Reduced Basis Matrix\n");
-    display_basis_matrix(basis_matrix, numVectors, dimension);
-    printf("\n");
 
     // Finally, the result of enumaratin on the reduced
     // basis is then written to a text file
-    // double shortest_euclidean_norm =
-    // svp_enumaration(basis_matrix, numVectors, dimension);
     if (shortest_euclidean_norm == 0) {
         return 0;
     }
@@ -216,10 +196,6 @@ int main(int argc, char *argv[]) {
     } else {
         printf("[FILE ERROR]: 'result.txt' could not be created");
     }
-
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("CPU time used: %f seconds\n", cpu_time_used);
 
     // Free memory used up by the basis matrix and vectrs within
     free_structs_mem(basis_matrix, numVectors, mega_input);
