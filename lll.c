@@ -174,6 +174,7 @@ void lll_algorithm(double** vectors, int numVectors, int dimension) {
                 }
 
                 free(GS_Coefficient_Vector);
+                GS_Coefficient_Vector = NULL;
                 // Update Gram-Shmit again
                 // Free memory used by orthogonol basis
                 for (int i = 0; i < numVectors; ++i) {

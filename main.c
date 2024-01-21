@@ -23,6 +23,8 @@ int main(int argc, char *argv[]) {
         numVectors = get_bracket_count(argc, argv);
         dimension = numVectors;
     } else {
+        printf("[INPUT ERROR] Number of opening brackets does not match "\
+                "number of closing brackets\n");
         return 0;
     }
 
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]) {
         }
     }
     free(temp_buffer_input);
+    temp_buffer_input = NULL;
 
     // Track what part of the command line input to process
     int megastring_index = 0;
@@ -122,11 +125,13 @@ int main(int argc, char *argv[]) {
                 printf("[MEMORY ALLOCATION ERROR]\n");
                 free_structs_mem(basis_matrix, numVectors, mega_input);
                 free(values);
+                values = NULL;
                 return 0;
             }
 
             strncpy(values, individual_vector + 1, vector_len - 2);
             free(individual_vector);
+            individual_vector = NULL;
             values[vector_len - 2] = '\0';
 
             // Extract each space-seperated value and attempt to
@@ -148,6 +153,7 @@ int main(int argc, char *argv[]) {
                 }
             }
             free(original_values);
+            original_values = NULL;
             // Ensure the correct amount of vectors has been extracted
             if (pos != numVectors) {
                 printf("[INPUT ERROR] Input n valid elements\n");
@@ -157,6 +163,7 @@ int main(int argc, char *argv[]) {
             printf("[INPUT ERROR] Missing closing bracket ']'\n");
             free_structs_mem(basis_matrix, numVectors, mega_input);
             free(individual_vector);
+            individual_vector = NULL;
             return 0;
         }
 
@@ -189,6 +196,8 @@ int main(int argc, char *argv[]) {
     // Finally, the result of enumaratin on the reduced
     // basis is then written to a text file
     if (shortest_euclidean_norm == 0) {
+        printf("[ERROR] Shortest Euclidean Norm is 0\n");
+        free_structs_mem(basis_matrix, numVectors, mega_input);
         return 0;
     }
     FILE *result_file = fopen("./result.txt", "w");
